@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_background">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Header Title -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="Usage Statistics"
+                android:textColor="@color/teal_400"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:background="@color/dark_surface" />
+
+            <!-- Summary Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardBackgroundColor="@color/dark_card"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Today's Overview"
+                        android:textColor="@color/teal_300"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <!-- Total Apps Opened -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Total Apps Opened"
+                            android:textColor="@color/text_primary_light"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvTotalOpened"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/teal_400"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="12" />
+                    </LinearLayout>
+
+                    <!-- Mindful Closes -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Mindful Closes"
+                            android:textColor="@color/text_primary_light"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvMindfulCloses"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/teal_400"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="5" />
+                    </LinearLayout>
+
+                    <!-- Journal Entries -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Journal Entries"
+                            android:textColor="@color/text_primary_light"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvJournalEntries"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/teal_400"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="7" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- App Usage Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="App Usage Today"
+                android:textColor="@color/text_primary_light"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- No Data Message -->
+            <TextView
+                android:id="@+id/tvNoData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="32dp"
+                android:gravity="center"
+                android:text="No usage data for today yet.\nStart using your gatekept apps to see stats here."
+                android:textColor="@color/text_secondary_light"
+                android:textSize="16sp"
+                android:lineSpacingExtra="4dp"
+                android:visibility="gone" />
+
+            <!-- App Usage List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAppUsage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:padding="12dp"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_app_stat" />
+
+            <!-- Recent Journal Entries Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:text="Recent Journal Entries"
+                android:textColor="@color/text_primary_light"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Journal Entries List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvJournalEntries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:padding="12dp"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_journal_entry" />
+
+            <!-- No Journal Entries Message -->
+            <TextView
+                android:id="@+id/tvNoJournalEntries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="32dp"
+                android:gravity="center"
+                android:text="No journal entries yet.\nReflect on your app usage to see entries here."
+                android:textColor="@color/text_secondary_light"
+                android:textSize="16sp"
+                android:lineSpacingExtra="4dp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/dark_background"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:menu="@menu/bottom_nav_menu" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout> 

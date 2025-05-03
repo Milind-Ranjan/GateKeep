@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">GateKeep</string>
+    <string name="accessibility_service_description">GateKeep monitors app launches to help you be more mindful of your app usage</string>
+    <string name="help_text">Select apps to gatekeep</string>
+    <string name="permission_required">Usage access permission required</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="apps_list">Apps List</string>
+    <string name="breathing_instruction">Take a deep breath…</string>
+    <string name="mindfulness_prompt">Why are you opening this app right now?</string>
+    <string name="journal_prompt">What are you hoping to feel right now?</string>
+    <string name="continue_anyway">Continue Anyway</string>
+    <string name="close_app">Close App</string>
+    <string name="usage_stats">Usage Stats</string>
+    <string name="apps_to_gatekeep">Apps to Gatekeep</string>
+    <string name="save">Save</string>
+    <string name="enter_your_thoughts">Enter your thoughts...</string>
+    <string name="app_usage_today">App Usage Today</string>
+</resources>

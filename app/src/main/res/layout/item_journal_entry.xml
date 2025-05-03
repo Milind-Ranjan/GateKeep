@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/dark_card"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header Info -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAppName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/teal_300"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Instagram" />
+
+                <TextView
+                    android:id="@+id/tvTimeStamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/text_secondary_light"
+                    android:textSize="12sp"
+                    tools:text="Today, 3:45 PM" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivQuote"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_quote"
+                android:tint="@color/teal_700" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/dark_elevated" />
+
+        <!-- Prompt -->
+        <TextView
+            android:id="@+id/tvPrompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary_light"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            tools:text="What are you hoping to feel right now?" />
+
+        <!-- Journal Content -->
+        <TextView
+            android:id="@+id/tvJournalContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/text_primary_light"
+            android:textSize="16sp"
+            tools:text="I'm hoping to feel connected with my friends, but I'm trying to be mindful of not just scrolling mindlessly." />
+    </LinearLayout>
+</androidx.cardview.widget.CardView> 

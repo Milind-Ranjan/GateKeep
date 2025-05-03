@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permission to query app usage statistics -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+
+    <application
+        android:name=".GateKeepApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.GateKeep"
+        tools:targetApi="31">
+        
+        <!-- Welcome Activity (Launcher) -->
+        <activity
+            android:name=".WelcomeActivity"
+            android:exported="true"
+            android:theme="@style/Theme.GateKeep.Interception">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name=".TraditionalMainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.AppCompat">
+        </activity>
+        
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.GateKeep">
+        </activity>
+        
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.AppCompat" />
+            
+        <activity
+            android:name=".AppsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.AppCompat" />
+            
+        <activity
+            android:name=".StatsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.AppCompat" />
+        
+        <service
+            android:name=".service.AppMonitoringService" 
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+        
+        <activity
+            android:name=".InterceptionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.Interception" />
+    </application>
+
+</manifest>
