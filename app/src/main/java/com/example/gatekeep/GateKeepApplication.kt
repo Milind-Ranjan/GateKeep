@@ -24,22 +24,9 @@ class GateKeepApplication : Application() {
         
         repository = AppRepository(applicationContext)
         
-        // Check both permissions on startup and show clear notifications
+        // Check both permissions on startup
         val hasUsageStats = hasUsageStatsPermission()
         val hasAccessibility = isAccessibilityServiceEnabled()
-        
-        if (!hasUsageStats || !hasAccessibility) {
-            val missingPermissions = mutableListOf<String>().apply {
-                if (!hasUsageStats) add("Usage Stats")
-                if (!hasAccessibility) add("Accessibility Service")
-            }
-            
-            Toast.makeText(
-                this,
-                "GateKeep requires permissions: ${missingPermissions.joinToString(", ")}. Please grant them to use the app.",
-                Toast.LENGTH_LONG
-            ).show()
-        }
     }
     
     private fun hasUsageStatsPermission(): Boolean {

@@ -23,7 +23,7 @@ class TraditionalMainActivity : AppCompatActivity() {
         
         if (!hasUsageAccess || !hasAccessibilityAccess) {
             // Show permission screen
-            setContentView(R.layout.screen_permissions)
+            setContentView(R.layout.activity_permissions)
             
             // Set up permission request buttons
             val btnUsageStats = findViewById<Button>(R.id.btnUsageStats)

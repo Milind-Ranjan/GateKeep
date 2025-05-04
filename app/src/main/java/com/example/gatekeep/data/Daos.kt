@@ -24,6 +24,9 @@ interface GateKeepAppDao {
     @Query("SELECT COUNT(*) FROM gatekeep_apps WHERE packageName = :packageName AND isEnabled = 1")
     suspend fun isAppEnabled(packageName: String): Int
     
+    @Query("SELECT COUNT(*) FROM gatekeep_apps WHERE isEnabled = 1")
+    suspend fun getEnabledAppsCount(): Int
+    
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(app: GateKeepApp)
     
@@ -47,6 +50,9 @@ interface AppUsageRecordDao {
     
     @Query("SELECT packageName, COUNT(*) as count FROM app_usage_records WHERE timestamp BETWEEN :startDate AND :endDate AND action = 'OPENED' GROUP BY packageName ORDER BY count DESC")
     suspend fun getAppOpenCountsByPackage(startDate: Date, endDate: Date): List<AppOpenCount>
+    
+    @Query("SELECT COUNT(*) FROM app_usage_records WHERE action = :action")
+    suspend fun getActionCount(action: String): Int
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(record: AppUsageRecord): Long

@@ -30,6 +30,16 @@
         </activity>
         
         <activity
+            android:name=".PermissionsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.Interception" />
+        
+        <activity
+            android:name=".TransitionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.Interception" />
+        
+        <activity
             android:name=".TraditionalMainActivity"
             android:exported="false"
             android:theme="@style/Theme.GateKeep.AppCompat">

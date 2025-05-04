@@ -16,16 +16,21 @@
     <color name="teal_800">#00695C</color>
     <color name="teal_900">#004D40</color>
     
+    <!-- Accent colors -->
+    <color name="accent_teal">#00BCD4</color>
+    
     <!-- Dark theme colors -->
     <color name="dark_background">#FF121212</color>
     <color name="dark_surface">#FF1E1E1E</color>
     <color name="dark_card">#FF242424</color>
     <color name="dark_elevated">#FF2C2C2C</color>
+    <color name="background_dark">#121212</color>
     
     <!-- Text colors -->
     <color name="text_primary_light">#DEFFFFFF</color>
     <color name="text_secondary_light">#99FFFFFF</color>
     <color name="text_disabled_light">#61FFFFFF</color>
+    <color name="text_secondary">#E0E0E0</color>
     
     <color name="text_primary_dark">#DE000000</color>
     <color name="text_secondary_dark">#99000000</color>

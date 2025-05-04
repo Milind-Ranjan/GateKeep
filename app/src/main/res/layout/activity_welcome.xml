@@ -6,27 +6,14 @@
     android:layout_height="match_parent"
     android:background="@color/dark_background">
 
-    <!-- Gradient Overlay -->
+    <!-- Night Sky Background -->
     <View
-        android:id="@+id/gradientOverlay"
+        android:id="@+id/welcomeBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_background" />
+        android:background="@drawable/welcome_background" />
     
-    <!-- Particle Animation Container -->
-    <FrameLayout
-        android:id="@+id/welcomeParticleContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Orbital Circle Container -->
-    <FrameLayout
-        android:id="@+id/welcomeOrbitalContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible" />
-    
-    <!-- Logo Container -->
+    <!-- Logo Container - Positioned at the golden ratio point for visual harmony -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/logoContainer"
         android:layout_width="wrap_content"
@@ -35,19 +22,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4">
+        app:layout_constraintVertical_bias="0.38">
 
-        <!-- Logo Components - Layered -->
+        <!-- Logo Components - Layered with careful spacing -->
         <FrameLayout
             android:id="@+id/logoFrame"
-            android:layout_width="230dp"
-            android:layout_height="230dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
             
-            <!-- Background Layer - Transparent placeholder instead of logo_background -->
+            <!-- Background Layer - Transparent placeholder -->
             <View
                 android:id="@+id/logoBackground"
                 android:layout_width="match_parent"
@@ -71,51 +58,56 @@
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- App Name -->
+    <!-- App Name with premium typography -->
     <TextView
         android:id="@+id/appNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="GateKeep"
+        android:text="GATEKEEP"
         android:textColor="@color/teal_200"
-        android:textSize="40sp"
-        android:letterSpacing="0.1"
-        android:textStyle="bold"
+        android:textSize="34sp"
+        android:letterSpacing="0.05"
+        android:fontFamily="sans-serif-light"
         android:alpha="0"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="42dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoContainer" />
 
-    <!-- Tagline -->
+    <!-- Tagline with subtle spacing and weight -->
     <TextView
         android:id="@+id/taglineText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Mindful Digital Wellness"
-        android:textColor="@color/text_primary_light"
-        android:textSize="18sp"
+        android:textColor="@color/text_secondary_light"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-light"
+        android:letterSpacing="0.04"
         android:alpha="0"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appNameText" />
 
-    <!-- Get Started Button -->
+    <!-- Premium Get Started Button with careful dimensions -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGetStarted"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="54dp"
         android:layout_marginHorizontal="48dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="56dp"
         android:alpha="0"
-        android:backgroundTint="@color/teal_700"
-        android:text="GET STARTED"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:letterSpacing="0.1"
+        android:backgroundTint="@color/teal_500"
+        android:text="Get Started"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.03"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
-        app:cornerRadius="10dp"
+        app:cornerRadius="28dp"
+        app:elevation="0dp"
+        app:rippleColor="#80009688"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

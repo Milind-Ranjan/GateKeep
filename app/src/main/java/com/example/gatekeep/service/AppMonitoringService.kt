@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
+import android.content.Context.RECEIVER_NOT_EXPORTED
 
 class AppMonitoringService : AccessibilityService() {
     private lateinit var repository: AppRepository
@@ -90,10 +91,11 @@ class AppMonitoringService : AccessibilityService() {
             }
         }
         
+        // Set up broadcast receivers for system events
+        setupTaskRemovedDetection()
+        
         // Start the periodic cleanup task
         handler.postDelayed(cleanupTask, 5000)
-        
-        Toast.makeText(applicationContext, "GateKeep service started", Toast.LENGTH_SHORT).show()
     }
     
     private suspend fun loadEnabledApps() {
@@ -260,7 +262,12 @@ class AppMonitoringService : AccessibilityService() {
                 }
             }
             
-            registerReceiver(receiver, filter)
+            // Add RECEIVER_NOT_EXPORTED flag for Android 13+ compatibility
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(receiver, filter, RECEIVER_NOT_EXPORTED)
+            } else {
+                registerReceiver(receiver, filter)
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error setting up task removal detection: ${e.message}")
         }

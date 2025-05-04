@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import android.provider.Settings
@@ -11,6 +12,7 @@ import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -50,8 +52,18 @@ import com.example.gatekeep.ui.navigation.NavigationItem
 class MainActivity : ComponentActivity() {
     private lateinit var repository: AppRepository
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Apply system UI flags for smoother appearance
+        window.setDecorFitsSystemWindows(false)
+        
+        // Enable hardware acceleration for better performance
+        window.setFlags(
+            android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+        )
         
         repository = AppRepository(applicationContext)
         
@@ -63,75 +75,16 @@ class MainActivity : ComponentActivity() {
                 ) {
                     var hasUsageAccess by remember { mutableStateOf(hasUsageStatsPermission(this)) }
                     var hasAccessibilityAccess by remember { mutableStateOf(isAccessibilityServiceEnabled(this)) }
-                    var showThankYouMessage by remember { mutableStateOf(false) }
                     var permissionsJustGranted by remember { mutableStateOf(false) }
                     
-                    // Periodically recheck permissions after returning from permission screens
+                    // Main content
+                    MainContent()
+                    
+                    // Check permissions
                     LaunchedEffect(Unit) {
-                        while (true) {
-                            val newHasUsageAccess = hasUsageStatsPermission(this@MainActivity)
-                            val newHasAccessibilityAccess = isAccessibilityServiceEnabled(this@MainActivity)
-                            
-                            // Check if permissions have just been granted
-                            if (!hasUsageAccess || !hasAccessibilityAccess) {
-                                if (newHasUsageAccess && newHasAccessibilityAccess) {
-                                    // All permissions just granted
-                                    permissionsJustGranted = true
-                                    showThankYouMessage = true
-                                }
-                            }
-                            
-                            hasUsageAccess = newHasUsageAccess
-                            hasAccessibilityAccess = newHasAccessibilityAccess
-                            
-                            delay(1000) // Check every second
-                        }
-                    }
-                    
-                    // Show thank you message and transition to main screen
-                    LaunchedEffect(showThankYouMessage) {
-                        if (showThankYouMessage) {
-                            Toast.makeText(
-                                this@MainActivity, 
-                                "Thank you for granting all permissions! GateKeep is now ready to use.", 
-                                Toast.LENGTH_LONG
-                            ).show()
-                            
-                            // Give time for the toast to be seen
-                            delay(2000)
-                            showThankYouMessage = false
-                        }
-                    }
-                    
-                    if (!hasUsageAccess || !hasAccessibilityAccess) {
-                        PermissionScreen(
-                            hasUsageStatsPermission = hasUsageAccess,
-                            hasAccessibilityPermission = hasAccessibilityAccess,
-                            onRequestUsageStatsPermission = {
-                                requestUsageStatsPermission()
-                            },
-                            onRequestAccessibilityPermission = {
-                                requestAccessibilityPermission()
-                            }
-                        )
-                    } else {
-                        if (permissionsJustGranted) {
-                            // Just show a loading screen while the toast is visible
-                            Surface(
-                                modifier = Modifier.fillMaxSize(),
-                                color = MaterialTheme.colorScheme.background
-                            ) {
-                                // Empty surface while toast is showing
-                            }
-                            
-                            // Reset the flag after a delay
-                            LaunchedEffect(permissionsJustGranted) {
-                                delay(2000)
-                                permissionsJustGranted = false
-                            }
-                        } else {
-                            MainScreen(repository)
-                        }
+                        // Single check at startup is sufficient
+                        hasUsageAccess = hasUsageStatsPermission(this@MainActivity)
+                        hasAccessibilityAccess = isAccessibilityServiceEnabled(this@MainActivity)
                     }
                 }
             }
@@ -183,8 +136,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(repository: AppRepository) {
+fun MainContent() {
+    val context = LocalContext.current
+    val repository = remember { AppRepository(context) }
     val navController = rememberNavController()
+    
+    // No permission check here - we assume permissions are already granted 
+    // since PermissionsActivity would redirect here only when permissions are granted
     
     Scaffold(
         bottomBar = {
@@ -198,7 +156,7 @@ fun MainScreen(repository: AppRepository) {
         ) {
             composable("home") {
                 HomeScreen(navController)
-}
+            }
             composable("apps") {
                 AppsScreen(repository)
             }

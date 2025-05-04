@@ -39,6 +39,10 @@ class StatsActivity : BaseActivity() {
         
         repository = AppRepository(applicationContext)
         
+        // Set header title
+        val headerTitle = findViewById<TextView>(R.id.headerTitle)
+        headerTitle.text = "Stats"
+        
         // Initialize views
         rvAppUsage = findViewById(R.id.rvAppUsage)
         rvJournalEntries = findViewById(R.id.rvJournalEntries)

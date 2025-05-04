@@ -184,4 +184,25 @@ class AppRepository(private val context: Context) {
     fun getJournalEntriesForApp(packageName: String): Flow<List<JournalEntry>> {
         return journalEntryDao.getJournalEntriesForApp(packageName)
     }
+    
+    // Add these methods for home screen statistics
+    suspend fun getMindfulMomentsCount(): Int {
+        try {
+            // Count the number of times apps were closed (mindful moments)
+            return appUsageRecordDao.getActionCount("CLOSED")
+        } catch (e: Exception) {
+            Log.e("AppRepository", "Error getting mindful moments count: ${e.message}", e)
+            return 0
+        }
+    }
+    
+    suspend fun getEnabledAppsCount(): Int {
+        try {
+            // Count the number of apps that are enabled for tracking
+            return gateKeepAppDao.getEnabledAppsCount()
+        } catch (e: Exception) {
+            Log.e("AppRepository", "Error getting enabled apps count: ${e.message}", e)
+            return 0
+        }
+    }
 } 

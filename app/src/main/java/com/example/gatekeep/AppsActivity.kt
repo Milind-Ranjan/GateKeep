@@ -32,6 +32,10 @@ class AppsActivity : BaseActivity() {
         
         repository = AppRepository(applicationContext)
         
+        // Set header title
+        val headerTitle = findViewById<TextView>(R.id.headerTitle)
+        headerTitle.text = "Apps"
+        
         // Initialize views
         rvApps = findViewById(R.id.rvApps)
         etSearch = findViewById(R.id.etSearch)

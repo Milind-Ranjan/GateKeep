@@ -396,9 +396,6 @@ class InterceptionActivity : AppCompatActivity() {
             .alpha(0f)
             .setDuration(300)
             .withEndAction {
-                // Show message to user
-                Toast.makeText(this, "Mindfully closed app", Toast.LENGTH_SHORT).show()
-                
                 // Go back to home screen
                 try {
                     val intent = Intent(Intent.ACTION_MAIN)
