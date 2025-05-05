@@ -4,6 +4,8 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -60,13 +62,38 @@ class InterceptionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
+            // Set window flags before super.onCreate for immediate effect
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+
+            // Important: Set the window to appear immediately
+            window.setFlags(
+                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
+                android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                android.view.WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
+                android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                android.view.WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            )
+
             super.onCreate(savedInstanceState)
+
+            // Terminate any task that might be starting the target app
+            killTargetAppTask()
+            
             setContentView(R.layout.activity_interception)
             
             // Ensure this activity is properly set up with the right flags
             if (intent != null) {
-                val flags = intent.flags
-                if ((flags and Intent.FLAG_ACTIVITY_NEW_TASK) == 0) {
+                if ((intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK) == 0) {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
             }
@@ -275,105 +302,122 @@ class InterceptionActivity : AppCompatActivity() {
     }
     
     private fun continueToApp(journalText: String) {
-        // Save the journal entry first
-        if (journalText.isNotBlank()) {
-            activityScope.launch {
-                try {
-                    repository.saveJournalEntry(
-                        packageName = packageName,
-                        prompt = "Journal entry",
-                        content = journalText
-                    )
-                    repository.recordAppAction(packageName, "CONTINUED")
-                } catch (e: Exception) {
-                    Log.e("GateKeepInterception", "Error saving journal entry: ${e.message}", e)
+        try {
+            // Disable buttons to prevent double-clicks
+            btnContinue.isEnabled = false
+            btnClose.isEnabled = false
+            
+            // Save the journal entry if there's text
+            if (journalText.isNotBlank()) {
+                activityScope.launch {
+                    try {
+                        repository.saveJournalEntry(
+                            packageName = packageName,
+                            prompt = "Journal entry",
+                            content = journalText
+                        )
+                        repository.recordAppAction(packageName, "CONTINUED")
+                    } catch (e: Exception) {
+                        Log.e("GateKeepInterception", "Error saving journal entry: ${e.message}", e)
+                    }
                 }
             }
-        }
-        
-        // Show a completion animation
-        showCompletionAnimation {
-            // Mark this app as being launched to prevent re-interception
-            try {
-                AppMonitoringService.markAppLaunch(applicationContext, packageName)
-            } catch (e: Exception) {
-                Log.e("GateKeepInterception", "Error marking app as launching: ${e.message}", e)
-            }
             
-            // First finish this activity to ensure we're out of the way
-            // We need to do this BEFORE launching the target app
-            finish()
+            // Let the service know we're launching this app to avoid re-interception
+            AppMonitoringService.getInstance()?.markAppAsLaunching(packageName)
             
-            // Small delay to ensure our activity is fully finished
-            try {
-                Thread.sleep(100)
-            } catch (e: Exception) {
-                // Ignore
-            }
-            
-            try {
-                // Now launch the app
-                val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
-                if (launchIntent != null) {
-                    // Set up the intent for a clean launch directly to the app
-                    launchIntent.apply {
-                        // Clear all flags first
-                        flags = 0
-                        // Add necessary flags
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        // Add main/launcher categories to ensure we start at the app's main activity
-                        addCategory(Intent.CATEGORY_LAUNCHER)
-                        addCategory(Intent.CATEGORY_DEFAULT)
-                        // Add component to be more specific - this forces the intent to go to the app's main activity
-                        val componentName = launchIntent.component
-                        if (componentName != null) {
-                            component = componentName
-                        }
+            // Show a completion animation before launching the app
+            showCompletionAnimation {
+                // Launch the app
+                try {
+                    // Get package manager
+                    val pm = packageManager
+                    // Get the launch intent for the app
+                    val launchIntent = pm.getLaunchIntentForPackage(packageName)?.apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or 
+                                 Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                 Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
                     }
                     
-                    // Launch from the application context to avoid activity reference issues
-                    applicationContext.startActivity(launchIntent)
-                } else {
-                    // If we can't launch the app, go home
-                    val homeIntent = Intent(Intent.ACTION_MAIN)
-                    homeIntent.addCategory(Intent.CATEGORY_HOME)
-                    homeIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(homeIntent)
-                }
-            } catch (e: Exception) {
-                // If there's an error, go home
-                try {
-                    val homeIntent = Intent(Intent.ACTION_MAIN)
-                    homeIntent.addCategory(Intent.CATEGORY_HOME)
-                    homeIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(homeIntent)
-                } catch (e2: Exception) {
-                    Log.e("GateKeepInterception", "Error going home: ${e2.message}", e2)
+                    if (launchIntent != null) {
+                        // Record the "CONTINUED" action
+                        activityScope.launch {
+                            repository.recordAppAction(packageName, "CONTINUED")
+                        }
+                        
+                        startActivity(launchIntent)
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                        finish()
+                    } else {
+                        // If we can't get the launch intent, just finish
+                        Toast.makeText(this, "Unable to launch app", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                } catch (e: Exception) {
+                    Log.e("GateKeepInterception", "Error launching app: ${e.message}", e)
+                    Toast.makeText(this, "Error launching app", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
             }
+        } catch (e: Exception) {
+            Log.e("GateKeepInterception", "Error in continueToApp: ${e.message}", e)
+            finish()
         }
     }
     
     private fun showCompletionAnimation(onComplete: () -> Unit) {
-        // Scale up the breathing circle fast
-        val scaleUp = ObjectAnimator.ofFloat(breathingCircle, "scaleX", breathingCircle.scaleX, 30f).apply {
-            duration = 800
-            interpolator = AccelerateDecelerateInterpolator()
+        try {
+            // Create subtle animations to show completion
+            val breathingCircleFadeOut = ObjectAnimator.ofFloat(breathingCircle, View.ALPHA, 1f, 0f).apply {
+                duration = 500
+                interpolator = DecelerateInterpolator()
+            }
+            
+            val mindfulnessContainerScale = ObjectAnimator.ofPropertyValuesHolder(
+                mindfulnessContainer,
+                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.9f),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.9f)
+            ).apply {
+                duration = 300
+                interpolator = DecelerateInterpolator()
+            }
+            
+            val mindfulnessContainerFadeOut = ObjectAnimator.ofFloat(mindfulnessContainer, View.ALPHA, 1f, 0f).apply {
+                duration = 500
+                startDelay = 100
+                interpolator = DecelerateInterpolator()
+            }
+            
+            val bottomActionContainerSlideDown = ObjectAnimator.ofFloat(
+                bottomActionContainer,
+                View.TRANSLATION_Y,
+                0f,
+                resources.displayMetrics.heightPixels.toFloat()
+            ).apply {
+                duration = 400
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+            
+            // Create animation set
+            val animSet = AnimatorSet()
+            animSet.playTogether(
+                breathingCircleFadeOut,
+                mindfulnessContainerScale,
+                mindfulnessContainerFadeOut,
+                bottomActionContainerSlideDown
+            )
+            
+            // Run completion callback when animation ends
+            animSet.doOnEnd {
+                onComplete()
+            }
+            
+            // Start animations
+            animSet.start()
+        } catch (e: Exception) {
+            Log.e("GateKeepInterception", "Error in completion animation: ${e.message}", e)
+            onComplete() // Still run the completion callback if there's an error
         }
-        
-        val scaleUpY = ObjectAnimator.ofFloat(breathingCircle, "scaleY", breathingCircle.scaleY, 30f).apply {
-            duration = 800
-            interpolator = AccelerateDecelerateInterpolator()
-        }
-        
-        // Create full screen flash effect
-        val animSet = AnimatorSet()
-        animSet.playTogether(scaleUp, scaleUpY)
-        animSet.doOnEnd {
-            onComplete()
-        }
-        animSet.start()
     }
     
     private fun closeApp() {
@@ -435,6 +479,38 @@ class InterceptionActivity : AppCompatActivity() {
         
         if (::pulseAnimator2.isInitialized) {
             pulseAnimator2.cancel()
+        }
+    }
+
+    // Kill any task for the target app to prevent it from launching
+    private fun killTargetAppTask() {
+        if (packageName.isNullOrEmpty()) {
+            packageName = intent.getStringExtra("packageName") ?: ""
+            if (packageName.isEmpty()) return
+        }
+        
+        try {
+            val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            
+            // Try to find and kill any task associated with the target app
+            activityManager.appTasks.forEach { appTask ->
+                val taskInfo = appTask.taskInfo
+                if (taskInfo != null && taskInfo.baseActivity != null && 
+                    taskInfo.baseActivity!!.packageName == packageName) {
+                    // We found the task for the target app, try to finish it
+                    appTask.finishAndRemoveTask()
+                }
+            }
+            
+            // Alternative approach for older Android versions
+            @Suppress("DEPRECATION")
+            activityManager.runningAppProcesses?.forEach { processInfo ->
+                if (processInfo.processName == packageName) {
+                    android.os.Process.killProcess(processInfo.pid)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("GateKeepInterception", "Error killing target app task: ${e.message}", e)
         }
     }
 } 

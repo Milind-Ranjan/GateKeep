@@ -52,26 +52,26 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         
         try {
-            // Check if this is the first launch
-            preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            
+        // Check if this is the first launch
+        preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        
             // We are only checking here - HomeActivity already checked, so we assume
             // we are in the welcome flow if we reach this point
-            setContentView(R.layout.activity_welcome)
-            
-            // Initialize UI components
-            initViews()
-            
-            // Start entrance animations
-            startAnimations()
-            
-            // Set up the Get Started button click listener
-            btnGetStarted.setOnClickListener {
+        setContentView(R.layout.activity_welcome)
+        
+        // Initialize UI components
+        initViews()
+        
+        // Start entrance animations
+        startAnimations()
+        
+        // Set up the Get Started button click listener
+        btnGetStarted.setOnClickListener {
                 // Mark as not first launch anymore - this is critical
-                setFirstTimeLaunch(false)
-                
-                // Premium button click effect
-                animateButtonClick()
+            setFirstTimeLaunch(false)
+            
+            // Premium button click effect
+            animateButtonClick()
             }
         } catch (e: Exception) {
             android.util.Log.e("WelcomeActivity", "Error in onCreate: ${e.message}", e)
@@ -163,7 +163,7 @@ class WelcomeActivity : AppCompatActivity() {
     
     private fun setFirstTimeLaunch(isFirstTime: Boolean) {
         try {
-            preferences.edit().putBoolean(KEY_FIRST_TIME, isFirstTime).apply()
+        preferences.edit().putBoolean(KEY_FIRST_TIME, isFirstTime).apply()
         } catch (e: Exception) {
             // Add fallback for any potential issues
             try {
@@ -177,14 +177,14 @@ class WelcomeActivity : AppCompatActivity() {
     
     private fun navigateToNextScreen() {
         try {
-            // Check if permissions have been granted
-            val permissionsActivity = Intent(this, PermissionsActivity::class.java)
+        // Check if permissions have been granted
+        val permissionsActivity = Intent(this, PermissionsActivity::class.java)
             val homeActivity = Intent(this, HomeActivity::class.java)
-            
-            // Check if app has necessary permissions
-            val hasAllPermissions = hasAllRequiredPermissions()
-            
-            // Navigate to appropriate screen
+        
+        // Check if app has necessary permissions
+        val hasAllPermissions = hasAllRequiredPermissions()
+        
+        // Navigate to appropriate screen
             startActivity(if (hasAllPermissions) homeActivity else permissionsActivity)
             finish()
         } catch (e: Exception) {
@@ -194,38 +194,38 @@ class WelcomeActivity : AppCompatActivity() {
                 finish()
             } catch (e2: Exception) {
                 // If that also fails, just finish this activity
-                finish()
+        finish()
             }
         }
     }
     
     private fun hasAllRequiredPermissions(): Boolean {
         try {
-            // Check for Usage Stats permission
-            val appOps = getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
-            val mode = appOps.checkOpNoThrow(
-                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(),
-                packageName
-            )
-            val hasUsageStats = mode == android.app.AppOpsManager.MODE_ALLOWED
-            
-            // Check for Accessibility Service
-            val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
-            val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(
-                android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK
-            )
-            
-            var hasAccessibility = false
-            for (service in enabledServices) {
-                val serviceInfo = service.resolveInfo.serviceInfo
-                if (serviceInfo.packageName == packageName && 
-                    serviceInfo.name == "com.example.gatekeep.service.AppMonitoringService") {
-                    hasAccessibility = true
-                    break
-                }
+        // Check for Usage Stats permission
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+        val mode = appOps.checkOpNoThrow(
+            android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(),
+            packageName
+        )
+        val hasUsageStats = mode == android.app.AppOpsManager.MODE_ALLOWED
+        
+        // Check for Accessibility Service
+        val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
+        val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(
+            android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+        )
+        
+        var hasAccessibility = false
+        for (service in enabledServices) {
+            val serviceInfo = service.resolveInfo.serviceInfo
+            if (serviceInfo.packageName == packageName && 
+                serviceInfo.name == "com.example.gatekeep.service.AppMonitoringService") {
+                hasAccessibility = true
+                break
             }
-            
+        }
+        
             // We also need to check if the service is running, but handle potential errors
             val isServiceRunning = try {
                 AppMonitoringService.isServiceRunning

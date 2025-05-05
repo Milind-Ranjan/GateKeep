@@ -107,7 +107,7 @@
                                 android:layout_height="54dp"
                                 android:background="@drawable/circular_gradient_bg">
 
-                                <ImageView
+                            <ImageView
                                     android:layout_width="28dp"
                                     android:layout_height="28dp"
                                     android:layout_gravity="center"
@@ -160,7 +160,7 @@
                                 android:layout_height="54dp"
                                 android:background="@drawable/circular_purple_gradient_bg">
 
-                                <ImageView
+                            <ImageView
                                     android:layout_width="28dp"
                                     android:layout_height="28dp"
                                     android:layout_gravity="center"
@@ -212,7 +212,7 @@
                                 android:layout_height="54dp"
                                 android:background="@drawable/circular_blue_gradient_bg">
 
-                                <ImageView
+                            <ImageView
                                     android:layout_width="28dp"
                                     android:layout_height="28dp"
                                     android:layout_gravity="center"
@@ -272,14 +272,14 @@
                             android:src="@drawable/ic_bar_chart"
                             app:tint="@color/teal_300" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="Today's App Usage"
-                            android:textColor="@color/teal_300"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                        android:text="Today's App Usage"
+                        android:textColor="@color/teal_300"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Circular Progress Indicator -->
@@ -361,14 +361,14 @@
                             android:src="@drawable/ic_book"
                             app:tint="@color/teal_300" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="Journal Reflections"
-                            android:textColor="@color/teal_300"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                        android:text="Journal Reflections"
+                        android:textColor="@color/teal_300"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
                     </LinearLayout>
 
                     <!-- Journal Entries List -->
@@ -447,14 +447,14 @@
                             android:src="@drawable/ic_lightbulb" 
                             app:tint="@color/teal_200" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="Weekly Insight"
-                            android:textColor="@color/teal_200"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                        android:text="Weekly Insight"
+                        android:textColor="@color/teal_200"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
                     </LinearLayout>
 
                     <TextView

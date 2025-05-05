@@ -16,13 +16,15 @@ import com.example.gatekeep.data.AppRepository
 import com.example.gatekeep.data.GateKeepApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 import android.content.Context.RECEIVER_NOT_EXPORTED
 
 class AppMonitoringService : AccessibilityService() {
     private lateinit var repository: AppRepository
-    private val serviceScope = CoroutineScope(Dispatchers.IO)
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var lastDetectedPackage: String? = null
     private var lastDetectionTime: Long = 0
     private val TAG = "GateKeepService"
@@ -39,8 +41,8 @@ class AppMonitoringService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
     
     // Time thresholds
-    private val REINTERCEPTION_THRESHOLD = 10000L  // 10 seconds
-    private val LAUNCH_TIMEOUT = 5000L  // 5 seconds
+    private val REINTERCEPTION_THRESHOLD = 5000L  // 5 seconds
+    private val LAUNCH_TIMEOUT = 10000L  // 10 seconds
     
     // Periodic task to clean up tracking maps
     private val cleanupTask = object : Runnable {
@@ -58,7 +60,7 @@ class AppMonitoringService : AccessibilityService() {
             }
             
             // Reschedule the task
-            handler.postDelayed(this, 5000) // Run every 5 seconds
+            handler.postDelayed(this, 5 * 60 * 1000) // Run every 5 minutes
         }
     }
 
@@ -73,6 +75,11 @@ class AppMonitoringService : AccessibilityService() {
         // Method to mark an app as being launched - callable from anywhere
         fun markAppLaunch(context: Context, packageName: String) {
             serviceInstance?.markAppAsLaunching(packageName)
+        }
+        
+        // Get the current service instance
+        fun getInstance(): AppMonitoringService? {
+            return serviceInstance
         }
     }
 
@@ -112,21 +119,22 @@ class AppMonitoringService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         
-        // Configure the service with optimal settings
+        // Configure the service with optimal settings for fast interception
         val info = serviceInfo
         info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or 
-                          AccessibilityEvent.TYPE_WINDOWS_CHANGED or
-                          AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
+                          AccessibilityEvent.TYPE_WINDOWS_CHANGED
         info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
         info.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS or
                      AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
-                     AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
-        info.notificationTimeout = 50
+                     AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS or
+                     AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+        info.notificationTimeout = 0 // Immediate notification
         info.packageNames = null // Monitor all packages
         
         serviceInfo = info
         
         isServiceRunning = true
+        serviceInstance = this
         
         // Load the enabled apps list when service connects
         serviceScope.launch {
@@ -198,17 +206,21 @@ class AppMonitoringService : AccessibilityService() {
                     }
                 }
                 
-                // Launch interception activity
-                val intent = Intent(this, InterceptionActivity::class.java).apply {
+                // Launch interception activity with proper flags for immediate display
+                mainScope.launch {
+                    val intent = Intent(this@AppMonitoringService, InterceptionActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or 
-                           Intent.FLAG_ACTIVITY_CLEAR_TOP
+                               Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                               Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or
+                               Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
                     putExtra("packageName", packageName)
-                    putExtra("timestamp", System.currentTimeMillis())
+                        putExtra("timestamp", currentTime)
                 }
                 try {
                     startActivity(intent)
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to launch interception activity", e)
+                    }
                 }
             }
         } catch (e: Exception) {

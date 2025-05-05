@@ -47,7 +47,7 @@ class HomeActivity : BaseActivity() {
 
             // Apply theme
             setTheme(R.style.Theme_GateKeep_AppCompat)
-            
+
             // Initialize preferences
             preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
             

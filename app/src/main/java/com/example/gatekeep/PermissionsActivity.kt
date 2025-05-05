@@ -66,29 +66,29 @@ class PermissionsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         
         try {
-            // Enable hardware acceleration for smoother animations
-            window.setFlags(
-                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
-            )
-            
-            preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            
+        // Enable hardware acceleration for smoother animations
+        window.setFlags(
+            android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+        )
+        
+        preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        
             // We are only checking here if permissions are granted - HomeActivity already checked,
             // so we assume permissions are needed if we reach this point
-            setContentView(R.layout.activity_permissions)
-            
-            // Initialize UI components
-            initViews()
-            
-            // Start with initial permissions check
-            checkPermissions()
-            
-            // Set up button click listeners
-            setupClickListeners()
-            
-            // Animate the content on entry
-            animateEntrance()
+        setContentView(R.layout.activity_permissions)
+        
+        // Initialize UI components
+        initViews()
+        
+        // Start with initial permissions check
+        checkPermissions()
+        
+        // Set up button click listeners
+        setupClickListeners()
+        
+        // Animate the content on entry
+        animateEntrance()
         } catch (e: Exception) {
             android.util.Log.e("PermissionsActivity", "Error in onCreate: ${e.message}", e)
             // If there's a critical error, go to HomeActivity
@@ -113,20 +113,20 @@ class PermissionsActivity : AppCompatActivity() {
         try {
             // Create intent for HomeActivity with proper flags to prevent loops
             val intent = Intent(this, HomeActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-            
-            // Simple fade animation
-            val fadeOutAnim = ObjectAnimator.ofFloat(
-                findViewById<View>(android.R.id.content), View.ALPHA, 1f, 0f
-            ).apply {
-                duration = 250
-                doOnEnd {
-                    startActivity(intent)
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                    finish()
-                }
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        
+        // Simple fade animation
+        val fadeOutAnim = ObjectAnimator.ofFloat(
+            findViewById<View>(android.R.id.content), View.ALPHA, 1f, 0f
+        ).apply {
+            duration = 250
+            doOnEnd {
+                startActivity(intent)
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                finish()
             }
-            fadeOutAnim.start()
+        }
+        fadeOutAnim.start()
         } catch (e: Exception) {
             // If animation fails, try direct navigation
             try {
@@ -311,13 +311,13 @@ class PermissionsActivity : AppCompatActivity() {
     
     private fun hasUsageStatsPermission(): Boolean {
         try {
-            val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-            val mode = appOps.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                packageName
-            )
-            return mode == AppOpsManager.MODE_ALLOWED
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOps.checkOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            Process.myUid(),
+            packageName
+        )
+        return mode == AppOpsManager.MODE_ALLOWED
         } catch (e: Exception) {
             return false
         }
@@ -325,33 +325,33 @@ class PermissionsActivity : AppCompatActivity() {
     
     private fun isAccessibilityServiceEnabled(): Boolean {
         try {
-            // First check if service is registered in accessibility services
-            val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-            val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(
-                AccessibilityServiceInfo.FEEDBACK_ALL_MASK
-            )
-            
-            val packageName = packageName
-            var isRegistered = false
-            
-            for (service in enabledServices) {
-                val serviceInfo = service.resolveInfo.serviceInfo
-                if (serviceInfo.packageName == packageName && 
-                    serviceInfo.name == "com.example.gatekeep.service.AppMonitoringService") {
-                    isRegistered = true
-                    break
-                }
+        // First check if service is registered in accessibility services
+        val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(
+            AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+        )
+        
+        val packageName = packageName
+        var isRegistered = false
+        
+        for (service in enabledServices) {
+            val serviceInfo = service.resolveInfo.serviceInfo
+            if (serviceInfo.packageName == packageName && 
+                serviceInfo.name == "com.example.gatekeep.service.AppMonitoringService") {
+                isRegistered = true
+                break
             }
-            
-            // Also check if service is actually running
+        }
+        
+        // Also check if service is actually running
             val isRunning = try {
                 AppMonitoringService.isServiceRunning
             } catch (e: Exception) {
                 // If there's an error, default to the registration check
                 isRegistered
             }
-            
-            return isRegistered && isRunning
+        
+        return isRegistered && isRunning
         } catch (e: Exception) {
             return false
         }
