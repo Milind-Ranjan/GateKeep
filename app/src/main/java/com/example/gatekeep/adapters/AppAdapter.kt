@@ -3,6 +3,7 @@ package com.example.gatekeep.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatekeep.R
@@ -38,12 +39,25 @@ class AppAdapter(
     
     inner class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvAppName: TextView = itemView.findViewById(R.id.tvAppName)
-        private val tvPackageName: TextView = itemView.findViewById(R.id.tvPackageName)
+        private val tvMindfulLabel: TextView = itemView.findViewById(R.id.tvMindfulLabel)
+        private val ivAppIcon: ImageView = itemView.findViewById(R.id.ivAppIcon)
         private val switchApp: SwitchMaterial = itemView.findViewById(R.id.switchApp)
         
         fun bind(app: GateKeepApp) {
             tvAppName.text = app.appName
-            tvPackageName.text = app.packageName
+            
+            // Load app icon
+            try {
+                val packageManager = itemView.context.packageManager
+                val appInfo = packageManager.getApplicationInfo(app.packageName, 0)
+                ivAppIcon.setImageDrawable(packageManager.getApplicationIcon(appInfo))
+            } catch (e: Exception) {
+                // If we can't load the icon, use a default one
+                ivAppIcon.setImageResource(android.R.drawable.sym_def_app_icon)
+            }
+            
+            // Show/hide "Added for mindfulness" label based on enablement
+            tvMindfulLabel.visibility = if (app.isEnabled) View.VISIBLE else View.GONE
             
             // Set switch state without triggering listener
             switchApp.setOnCheckedChangeListener(null)
@@ -51,7 +65,14 @@ class AppAdapter(
             
             // Set listener for changes
             switchApp.setOnCheckedChangeListener { _, isChecked ->
+                // Update the mindfulness label immediately for better UX
+                tvMindfulLabel.visibility = if (isChecked) View.VISIBLE else View.GONE
                 onToggle(app, isChecked)
+            }
+            
+            // Make the entire item clickable to toggle the switch
+            itemView.setOnClickListener {
+                switchApp.isChecked = !switchApp.isChecked
             }
         }
     }

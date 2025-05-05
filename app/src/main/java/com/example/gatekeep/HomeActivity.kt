@@ -1,14 +1,20 @@
 package com.example.gatekeep
 
+import android.app.AppOpsManager
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Process
 import android.util.Log
 import android.view.WindowManager
+import android.view.accessibility.AccessibilityManager
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import com.example.gatekeep.data.AppRepository
+import com.example.gatekeep.service.AppMonitoringService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,13 +22,22 @@ import kotlinx.coroutines.withContext
 
 class HomeActivity : BaseActivity() {
     private lateinit var repository: AppRepository
+    private lateinit var preferences: SharedPreferences
     private val activityScope = CoroutineScope(Dispatchers.Main)
+    
+    companion object {
+        private const val PREF_NAME = "GateKeepPrefs"
+        private const val KEY_FIRST_TIME = "first_time_launch"
+    }
 
     override fun getContentViewId(): Int = R.layout.screen_home
 
     override fun getNavigationMenuItemId(): Int = R.id.nav_home
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Always call super.onCreate first to ensure proper initialization
+        super.onCreate(savedInstanceState)
+        
         try {
             // Enable hardware acceleration for better performance
             window.setFlags(
@@ -30,10 +45,31 @@ class HomeActivity : BaseActivity() {
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
             )
 
-            // Pre-load layout before super.onCreate for faster rendering
+            // Apply theme
             setTheme(R.style.Theme_GateKeep_AppCompat)
-
-            super.onCreate(savedInstanceState)
+            
+            // Initialize preferences
+            preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            
+            // Check if this is the first time launch
+            if (isFirstTimeLaunch()) {
+                // On first launch, show welcome screen
+                val intent = Intent(this, WelcomeActivity::class.java)
+                startActivity(intent)
+                finish()
+                return
+            }
+            
+            // Check if required permissions are granted
+            // If not, redirect to PermissionsActivity
+            if (!hasRequiredPermissions()) {
+                val intent = Intent(this, PermissionsActivity::class.java)
+                startActivity(intent)
+                finish()
+                return
+            }
+            
+            // BaseActivity will handle setting content view in its onCreate
             
             // Initialize repository
             repository = AppRepository(applicationContext)
@@ -97,6 +133,52 @@ class HomeActivity : BaseActivity() {
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error initializing home screen: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    private fun isFirstTimeLaunch(): Boolean {
+        return preferences.getBoolean(KEY_FIRST_TIME, true)
+    }
+    
+    private fun hasRequiredPermissions(): Boolean {
+        try {
+            // Check for Usage Stats permission
+            val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+            val mode = appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                packageName
+            )
+            val hasUsageStats = mode == AppOpsManager.MODE_ALLOWED
+            
+            // Check for Accessibility Service
+            val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+            val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(
+                android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+            )
+            
+            var hasAccessibility = false
+            for (service in enabledServices) {
+                val serviceInfo = service.resolveInfo.serviceInfo
+                if (serviceInfo.packageName == packageName && 
+                    serviceInfo.name == "com.example.gatekeep.service.AppMonitoringService") {
+                    hasAccessibility = true
+                    break
+                }
+            }
+            
+            // Check if the service is actually running
+            val isServiceRunning = try {
+                AppMonitoringService.isServiceRunning
+            } catch (e: Exception) {
+                // If we can't access the service property, assume it's not running
+                false
+            }
+            
+            return hasUsageStats && hasAccessibility && isServiceRunning
+        } catch (e: Exception) {
+            // If we encounter any errors, assume permissions are not granted
+            return false
         }
     }
     

@@ -8,42 +8,33 @@
     android:paddingTop="22dp"
     android:paddingBottom="14dp">
 
-    <!-- App Logo -->
-    <ImageView
-        android:id="@+id/headerLogo"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:src="@drawable/ic_logo"
-        android:contentDescription="GateKeep Logo"
-        android:padding="2dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <!-- Header Title -->
+    <!-- Header Title - Now centered on screen -->
     <TextView
         android:id="@+id/headerTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/product_sans_medium"
-        android:textColor="@color/teal_300"
-        android:textSize="40sp"
         android:text="GateKeep"
-        android:gravity="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <!-- Subtle Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/dark_card"
-        android:layout_marginTop="14dp"
+        android:textAlignment="center"
+        android:textColor="@color/teal_300"
+        android:textSize="35sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerTitle" />
+        app:layout_constraintTop_toTopOf="parent" />
+        
+    <!-- App Logo - Now on the right side -->
+    <ImageView
+        android:id="@+id/headerLogo"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginEnd="300dp"
+        android:contentDescription="GateKeep Logo"
+        android:padding="2dp"
+        android:src="@drawable/ic_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

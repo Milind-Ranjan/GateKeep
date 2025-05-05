@@ -30,6 +30,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.view.ViewCompat
 import com.example.gatekeep.service.AppMonitoringService
+import com.example.gatekeep.HomeActivity
 import com.google.android.material.button.MaterialButton
 
 class PermissionsActivity : AppCompatActivity() {
@@ -64,36 +65,40 @@ class PermissionsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Enable hardware acceleration for smoother animations
-        window.setFlags(
-            android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-            android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
-        )
-        
-        preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        
-        // Reset permissions granted flag for debugging
-        setPermissionsGranted(false)
-        
-        // Check if permissions have been previously granted
-        if (arePermissionsGranted()) {
-            navigateToMainActivity()
-            return
+        try {
+            // Enable hardware acceleration for smoother animations
+            window.setFlags(
+                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+            )
+            
+            preferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            
+            // We are only checking here if permissions are granted - HomeActivity already checked,
+            // so we assume permissions are needed if we reach this point
+            setContentView(R.layout.activity_permissions)
+            
+            // Initialize UI components
+            initViews()
+            
+            // Start with initial permissions check
+            checkPermissions()
+            
+            // Set up button click listeners
+            setupClickListeners()
+            
+            // Animate the content on entry
+            animateEntrance()
+        } catch (e: Exception) {
+            android.util.Log.e("PermissionsActivity", "Error in onCreate: ${e.message}", e)
+            // If there's a critical error, go to HomeActivity
+            try {
+                setPermissionsGranted(true) // Temporarily set to true to avoid loops
+                navigateToMainActivity()
+            } catch (e2: Exception) {
+                finish()
+            }
         }
-        
-        setContentView(R.layout.activity_permissions)
-        
-        // Initialize UI components
-        initViews()
-        
-        // Start with initial permissions check
-        checkPermissions()
-        
-        // Set up button click listeners
-        setupClickListeners()
-        
-        // Animate the content on entry
-        animateEntrance()
     }
     
     private fun arePermissionsGranted(): Boolean {
@@ -105,22 +110,35 @@ class PermissionsActivity : AppCompatActivity() {
     }
     
     private fun navigateToMainActivity() {
-        // Create intent for MainActivity with proper flags to prevent loops
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        
-        // Simple fade animation
-        val fadeOutAnim = ObjectAnimator.ofFloat(
-            findViewById<View>(android.R.id.content), View.ALPHA, 1f, 0f
-        ).apply {
-            duration = 250
-            doOnEnd {
+        try {
+            // Create intent for HomeActivity with proper flags to prevent loops
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            
+            // Simple fade animation
+            val fadeOutAnim = ObjectAnimator.ofFloat(
+                findViewById<View>(android.R.id.content), View.ALPHA, 1f, 0f
+            ).apply {
+                duration = 250
+                doOnEnd {
+                    startActivity(intent)
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    finish()
+                }
+            }
+            fadeOutAnim.start()
+        } catch (e: Exception) {
+            // If animation fails, try direct navigation
+            try {
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                finish()
+            } catch (e2: Exception) {
+                // Last resort, try to finish this activity
                 finish()
             }
         }
-        fadeOutAnim.start()
     }
     
     private fun initViews() {
@@ -250,7 +268,7 @@ class PermissionsActivity : AppCompatActivity() {
         updateUsageStatsUI(hasUsageAccess)
         updateAccessibilityUI(hasAccessibility)
         
-        // If both permissions are granted, launch the dedicated transition activity
+        // If both permissions are granted, navigate directly to HomeActivity
         if (hasUsageAccess && hasAccessibility) {
             // Remove the permission check callback to avoid multiple launches
             handler.removeCallbacks(permissionCheckRunnable)
@@ -258,15 +276,8 @@ class PermissionsActivity : AppCompatActivity() {
             // Set permissions as granted in preferences
             setPermissionsGranted(true)
             
-            // Launch the dedicated transition activity
-            val intent = Intent(this, TransitionActivity::class.java)
-            startActivity(intent)
-            
-            // Use custom fade transitions for smoother experience
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-            
-            // Finish this activity
-            finish()
+            // Navigate directly to HomeActivity
+            navigateToMainActivity()
         }
     }
     
@@ -299,38 +310,51 @@ class PermissionsActivity : AppCompatActivity() {
     }
     
     private fun hasUsageStatsPermission(): Boolean {
-        val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = appOps.checkOpNoThrow(
-            AppOpsManager.OPSTR_GET_USAGE_STATS,
-            Process.myUid(),
-            packageName
-        )
-        return mode == AppOpsManager.MODE_ALLOWED
+        try {
+            val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+            val mode = appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                packageName
+            )
+            return mode == AppOpsManager.MODE_ALLOWED
+        } catch (e: Exception) {
+            return false
+        }
     }
     
     private fun isAccessibilityServiceEnabled(): Boolean {
-        // First check if service is registered in accessibility services
-        val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-        val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(
-            AccessibilityServiceInfo.FEEDBACK_ALL_MASK
-        )
-        
-        val packageName = packageName
-        var isRegistered = false
-        
-        for (service in enabledServices) {
-            val serviceInfo = service.resolveInfo.serviceInfo
-            if (serviceInfo.packageName == packageName && 
-                serviceInfo.name == "com.example.gatekeep.service.AppMonitoringService") {
-                isRegistered = true
-                break
+        try {
+            // First check if service is registered in accessibility services
+            val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+            val enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(
+                AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+            )
+            
+            val packageName = packageName
+            var isRegistered = false
+            
+            for (service in enabledServices) {
+                val serviceInfo = service.resolveInfo.serviceInfo
+                if (serviceInfo.packageName == packageName && 
+                    serviceInfo.name == "com.example.gatekeep.service.AppMonitoringService") {
+                    isRegistered = true
+                    break
+                }
             }
+            
+            // Also check if service is actually running
+            val isRunning = try {
+                AppMonitoringService.isServiceRunning
+            } catch (e: Exception) {
+                // If there's an error, default to the registration check
+                isRegistered
+            }
+            
+            return isRegistered && isRunning
+        } catch (e: Exception) {
+            return false
         }
-        
-        // Also check if service is actually running
-        val isRunning = AppMonitoringService.isServiceRunning
-        
-        return isRegistered && isRunning
     }
     
     private fun requestUsageStatsPermission() {

@@ -4,23 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="12dp"
     app:cardBackgroundColor="@color/dark_card"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="center_vertical">
 
+        <!-- App Icon - Removed circular container, directly using ImageView -->
+        <ImageView
+            android:id="@+id/ivAppIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            tools:src="@android:drawable/sym_def_app_icon" />
+
+        <!-- App Details -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_toEndOf="@id/ivAppIcon"
+            android:layout_toStartOf="@id/switchApp"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp">
 
             <TextView
                 android:id="@+id/tvAppName"
@@ -28,28 +41,33 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_primary_light"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/product_sans_medium"
+                android:ellipsize="end"
+                android:maxLines="1"
                 tools:text="Instagram" />
 
+            <!-- 'Added for mindfulness' label that appears when app is selected -->
             <TextView
-                android:id="@+id/tvPackageName"
-                android:layout_width="match_parent"
+                android:id="@+id/tvMindfulLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:alpha="0.7"
-                android:textColor="@color/text_secondary_light"
-                android:textSize="14sp"
-                tools:text="com.instagram.android" />
-
+                android:text="Added for mindfulness"
+                android:textColor="@color/teal_300"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
         </LinearLayout>
 
+        <!-- Modern Toggle Switch -->
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchApp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:thumbTint="@color/teal_400"
-            app:trackTint="@color/teal_900" />
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            app:thumbTint="@color/switch_thumb_color"
+            app:trackTint="@color/switch_track_color" />
 
-    </LinearLayout>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView> 

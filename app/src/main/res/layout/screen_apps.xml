@@ -17,107 +17,209 @@
             android:id="@+id/appsHeader"
             layout="@layout/layout_header" />
 
-        <!-- Search Bar -->
+        <!-- Modern Search & Filter Section -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             app:cardBackgroundColor="@color/dark_card"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="8dp">
+                android:paddingVertical="6dp"
+                android:paddingHorizontal="16dp">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     android:src="@drawable/ic_search"
-                    android:tint="@color/teal_400" />
+                    android:tint="@color/teal_300" />
 
                 <EditText
                     android:id="@+id/etSearch"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
                     android:background="@null"
-                    android:hint="Search apps..."
+                    android:hint="Search your apps..."
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:textColor="@color/text_primary_light"
-                    android:textColorHint="@color/text_secondary_light" />
+                    android:textColorHint="@color/text_secondary_light"
+                    android:fontFamily="@font/product_sans_medium" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Selected Count -->
-        <TextView
-            android:id="@+id/tvSelectedCount"
+        <!-- Selected Apps Panel -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="0 apps selected for mindfulness"
-            android:textColor="@color/teal_300"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
-            android:text="Select apps you want to be more mindful about using"
-            android:textColor="@color/text_secondary_light"
-            android:textSize="14sp" />
+            app:cardBackgroundColor="@color/teal_900"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
 
-        <!-- Loading Indicator -->
-        <RelativeLayout
-            android:id="@+id/loadingContainer"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_list"
+                    android:tint="@color/teal_200" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:id="@+id/tvSelectedCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0 apps selected for mindfulness"
+                        android:textColor="@color/teal_200"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Tap on apps below to enable them"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- View Title -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:indeterminateTint="@color/teal_500" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="80dp"
-                android:text="Loading apps..."
-                android:textColor="@color/text_secondary_light" />
+                android:text="Your Apps"
+                android:textColor="@color/text_primary_light"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Removed the divider as requested -->
+        </LinearLayout>
+
+        <!-- Loading Indicator with Animated Design -->
+        <RelativeLayout
+            android:id="@+id/loadingContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerInParent="true"
+                app:cardBackgroundColor="@color/dark_card"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="24dp">
+
+                    <ProgressBar
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:indeterminateTint="@color/teal_300" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Finding your apps..."
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="This will only take a moment"
+                        android:textColor="@color/text_secondary_light"
+                        android:textSize="14sp"
+                        android:textAlignment="center" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
         </RelativeLayout>
 
-        <!-- No Results -->
-        <TextView
+        <!-- No Results with Better Styling -->
+        <LinearLayout
             android:id="@+id/tvNoResults"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:orientation="vertical"
             android:gravity="center"
-            android:text="No apps found matching your search"
-            android:textColor="@color/text_secondary_light"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            android:layout_marginTop="40dp"
+            android:visibility="gone">
+            
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_search"
+                android:alpha="0.6"
+                android:tint="@color/teal_300" />
+                
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="No matching apps found"
+                android:textColor="@color/text_primary_light"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Try a different search term"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-        <!-- App List -->
+        <!-- App List with Enhanced Styling -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvApps"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:padding="12dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
             tools:listitem="@layout/item_app" />
     </LinearLayout>
 

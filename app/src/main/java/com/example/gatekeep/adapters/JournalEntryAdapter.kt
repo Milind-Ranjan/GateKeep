@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gatekeep.R
@@ -37,9 +38,9 @@ class JournalEntryAdapter(
     override fun getItemCount(): Int = entries.size
     
     inner class JournalEntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val ivAppIcon: ImageView = itemView.findViewById(R.id.ivAppIcon)
         private val tvAppName: TextView = itemView.findViewById(R.id.tvAppName)
         private val tvTimeStamp: TextView = itemView.findViewById(R.id.tvTimeStamp)
-        private val tvPrompt: TextView = itemView.findViewById(R.id.tvPrompt)
         private val tvJournalContent: TextView = itemView.findViewById(R.id.tvJournalContent)
         private val context: Context = itemView.context
         
@@ -49,8 +50,17 @@ class JournalEntryAdapter(
             
             tvAppName.text = appName
             tvTimeStamp.text = dateFormat.format(entry.timestamp)
-            tvPrompt.text = entry.prompt
             tvJournalContent.text = entry.content
+            
+            // Load app icon
+            try {
+                val packageManager = context.packageManager
+                val appInfo = packageManager.getApplicationInfo(entry.packageName, 0)
+                ivAppIcon.setImageDrawable(packageManager.getApplicationIcon(appInfo))
+            } catch (e: Exception) {
+                // If we can't load the icon, use a default one
+                ivAppIcon.setImageResource(android.R.drawable.sym_def_app_icon)
+            }
         }
         
         private fun getAppName(packageName: String): String {

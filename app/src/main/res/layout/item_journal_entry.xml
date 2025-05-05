@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/dark_card"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardBackgroundColor="@color/dark_card_lighter"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/teal_700"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,11 +24,20 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
+            <!-- App Icon -->
+            <ImageView
+                android:id="@+id/ivAppIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="2dp"
+                tools:src="@mipmap/ic_launcher" />
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="10dp">
 
                 <TextView
                     android:id="@+id/tvAppName"
@@ -52,7 +63,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_quote"
-                android:tint="@color/teal_700" />
+                app:tint="@color/teal_300" />
         </LinearLayout>
 
         <!-- Divider -->
@@ -61,17 +72,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
-            android:background="@color/dark_elevated" />
-
-        <!-- Prompt -->
-        <TextView
-            android:id="@+id/tvPrompt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_secondary_light"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            tools:text="What are you hoping to feel right now?" />
+            android:background="@color/teal_900" />
 
         <!-- Journal Content -->
         <TextView
@@ -84,4 +85,4 @@
             android:textSize="16sp"
             tools:text="I'm hoping to feel connected with my friends, but I'm trying to be mindful of not just scrolling mindlessly." />
     </LinearLayout>
-</androidx.cardview.widget.CardView> 
+</com.google.android.material.card.MaterialCardView> 

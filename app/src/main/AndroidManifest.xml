@@ -18,15 +18,22 @@
         android:theme="@style/Theme.GateKeep"
         tools:targetApi="31">
         
-        <!-- Welcome Activity (Launcher) -->
+        <!-- Home Activity (Launcher) -->
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".HomeActivity"
             android:exported="true"
-            android:theme="@style/Theme.GateKeep.Interception">
+            android:theme="@style/Theme.GateKeep.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        
+        <!-- Welcome Activity (Removed Launcher status) -->
+        <activity
+            android:name=".WelcomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GateKeep.Interception">
         </activity>
         
         <activity
@@ -51,11 +58,6 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.GateKeep">
         </activity>
-        
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false"
-            android:theme="@style/Theme.GateKeep.AppCompat" />
             
         <activity
             android:name=".AppsActivity"
@@ -65,7 +67,7 @@
         <activity
             android:name=".StatsActivity"
             android:exported="false"
-            android:theme="@style/Theme.GateKeep.AppCompat" />
+            android:theme="@style/Theme.GateKeep.Interception" />
         
         <service
             android:name=".service.AppMonitoringService" 
