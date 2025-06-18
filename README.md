@@ -111,7 +111,7 @@ app/src/main/java/com/example/gatekeep/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/gatekeep.git
+   git clone https://github.com/Milind-Ranjan/GateKeep.git
    cd gatekeep
    ```
 
