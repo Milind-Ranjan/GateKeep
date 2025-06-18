@@ -44,11 +44,17 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         
-        <!-- Add these new attributes for better interception -->
+        <!-- Enhanced attributes for better interception overlay -->
         <item name="android:windowDisablePreview">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowShowWallpaper">false</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowSoftInputMode">adjustNothing</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:windowOverscan">false</item>
     </style>
 </resources>

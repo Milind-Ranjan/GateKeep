@@ -2,8 +2,8 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/accessibility_service_description"
     android:packageNames="*"
-    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeWindowsChanged"
-    android:accessibilityFlags="flagIncludeNotImportantViews|flagReportViewIds|flagRequestFilterKeyEvents"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+    android:accessibilityFlags="flagIncludeNotImportantViews|flagReportViewIds|flagRequestFilterKeyEvents|flagRetrieveInteractiveWindows"
     android:canRetrieveWindowContent="true"
-    android:notificationTimeout="100"
+    android:notificationTimeout="0"
     android:settingsActivity="com.example.gatekeep.MainActivity" /> 

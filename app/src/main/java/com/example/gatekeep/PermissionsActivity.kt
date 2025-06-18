@@ -10,11 +10,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Path
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Process
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -30,7 +32,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.view.ViewCompat
 import com.example.gatekeep.service.AppMonitoringService
-import com.example.gatekeep.HomeActivity
 import com.google.android.material.button.MaterialButton
 
 class PermissionsActivity : AppCompatActivity() {
@@ -263,13 +264,18 @@ class PermissionsActivity : AppCompatActivity() {
     private fun checkPermissions() {
         val hasUsageAccess = hasUsageStatsPermission()
         val hasAccessibility = isAccessibilityServiceEnabled()
+        val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(this)
+        } else {
+            true
+        }
         
         // Update UI based on permission status
         updateUsageStatsUI(hasUsageAccess)
         updateAccessibilityUI(hasAccessibility)
         
-        // If both permissions are granted, navigate directly to HomeActivity
-        if (hasUsageAccess && hasAccessibility) {
+        // If all permissions are granted, navigate directly to HomeActivity
+        if (hasUsageAccess && hasAccessibility && hasOverlayPermission) {
             // Remove the permission check callback to avoid multiple launches
             handler.removeCallbacks(permissionCheckRunnable)
             
@@ -278,6 +284,9 @@ class PermissionsActivity : AppCompatActivity() {
             
             // Navigate directly to HomeActivity
             navigateToMainActivity()
+        } else if (!hasOverlayPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Request overlay permission if not granted
+            requestOverlayPermission()
         }
     }
     
@@ -365,6 +374,14 @@ class PermissionsActivity : AppCompatActivity() {
         startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
     }
     
+    private fun requestOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+            intent.data = android.net.Uri.parse("package:$packageName")
+            startActivity(intent)
+        }
+    }
+    
     override fun onResume() {
         super.onResume()
         // Start checking permissions periodically
@@ -375,5 +392,18 @@ class PermissionsActivity : AppCompatActivity() {
         super.onPause()
         // Stop checking permissions when activity is not visible
         handler.removeCallbacks(permissionCheckRunnable)
+    }
+    
+    private fun hasRequiredPermissions(): Boolean {
+        val hasUsageStats = hasUsageStatsPermission()
+        val hasAccessibility = isAccessibilityServiceEnabled()
+        val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Settings.canDrawOverlays(this)
+        } else {
+            true // Not required on older versions
+        }
+        
+        Log.d("PermissionsActivity", "Usage Stats: $hasUsageStats, Accessibility: $hasAccessibility, Overlay: $hasOverlayPermission")
+        return hasUsageStats && hasAccessibility && hasOverlayPermission
     }
 } 

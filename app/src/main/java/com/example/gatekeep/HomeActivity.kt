@@ -4,8 +4,10 @@ import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.Process
+import android.provider.Settings
 import android.util.Log
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityManager
@@ -175,7 +177,14 @@ class HomeActivity : BaseActivity() {
                 false
             }
             
-            return hasUsageStats && hasAccessibility && isServiceRunning
+            // Check for overlay permission (Android 6.0+)
+            val hasOverlayPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Settings.canDrawOverlays(this)
+            } else {
+                true // Not required on older versions
+            }
+            
+            return hasUsageStats && hasAccessibility && isServiceRunning && hasOverlayPermission
         } catch (e: Exception) {
             // If we encounter any errors, assume permissions are not granted
             return false

@@ -63,31 +63,48 @@ class InterceptionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
             // Set window flags before super.onCreate for immediate effect
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE or
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
                     View.SYSTEM_UI_FLAG_FULLSCREEN
 
-            // Important: Set the window to appear immediately
+            // Enhanced window flags for better stability
             window.setFlags(
                 android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
                 android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                 android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
                 android.view.WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                android.view.WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED or
                 android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                 android.view.WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
                 android.view.WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                android.view.WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                android.view.WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
             )
 
             super.onCreate(savedInstanceState)
 
-            // Terminate any task that might be starting the target app
-            killTargetAppTask()
+            // Get package name first before doing anything else
+            packageName = intent.getStringExtra("packageName") ?: ""
+            
+            if (packageName.isEmpty()) {
+                Log.e("GateKeepInterception", "Package name is empty, cannot continue")
+                finish()
+                return
+            }
+
+            // Delay aggressive task killing to avoid race conditions
+            handler.postDelayed({
+                killTargetAppTask()
+            }, 500)
             
             setContentView(R.layout.activity_interception)
             
@@ -98,18 +115,15 @@ class InterceptionActivity : AppCompatActivity() {
                 }
             }
             
-            packageName = intent.getStringExtra("packageName") ?: ""
-            
-            if (packageName.isEmpty()) {
-                Log.e("GateKeepInterception", "Package name is empty, cannot continue")
-                finish()
-                return
-            }
-            
             repository = AppRepository(applicationContext)
             
             // Initialize UI elements
             initializeViews()
+            
+            // Re-enable touch after short delay to allow user interaction
+            handler.postDelayed({
+                window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }, 1000)
             
             // Set up animations
             setupAnimations()
@@ -456,8 +470,42 @@ class InterceptionActivity : AppCompatActivity() {
             .start()
     }
     
+    override fun onStart() {
+        super.onStart()
+        Log.d("GateKeepInterception", "InterceptionActivity onStart() for package: $packageName")
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        Log.d("GateKeepInterception", "InterceptionActivity onResume() for package: $packageName")
+        
+        // Ensure we're still the foreground activity
+        try {
+            // Re-apply window flags to ensure overlay stays on top
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+        } catch (e: Exception) {
+            Log.e("GateKeepInterception", "Error setting system UI flags in onResume: ${e.message}", e)
+        }
+    }
+    
+    override fun onPause() {
+        super.onPause()
+        Log.d("GateKeepInterception", "InterceptionActivity onPause() for package: $packageName")
+    }
+    
+    override fun onStop() {
+        super.onStop()
+        Log.d("GateKeepInterception", "InterceptionActivity onStop() for package: $packageName")
+    }
+    
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        Log.d("GateKeepInterception", "InterceptionActivity onNewIntent() for package: ${intent.getStringExtra("packageName")}")
         
         if (intent.getBooleanExtra("should_finish", false)) {
             finish()
@@ -466,6 +514,7 @@ class InterceptionActivity : AppCompatActivity() {
     
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("GateKeepInterception", "InterceptionActivity onDestroy() for package: $packageName")
         handler.removeCallbacksAndMessages(null)
         
         // Cleanup animations
@@ -482,6 +531,12 @@ class InterceptionActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        // Prevent back button from closing the overlay too easily
+        Log.d("GateKeepInterception", "Back button pressed - ignoring for package: $packageName")
+        // Don't call super.onBackPressed() to prevent easy dismissal
+    }
+
     // Kill any task for the target app to prevent it from launching
     private fun killTargetAppTask() {
         if (packageName.isNullOrEmpty()) {
@@ -492,25 +547,29 @@ class InterceptionActivity : AppCompatActivity() {
         try {
             val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             
-            // Try to find and kill any task associated with the target app
+            // Less aggressive approach - only try to finish running tasks, don't kill processes
             activityManager.appTasks.forEach { appTask ->
-                val taskInfo = appTask.taskInfo
-                if (taskInfo != null && taskInfo.baseActivity != null && 
-                    taskInfo.baseActivity!!.packageName == packageName) {
-                    // We found the task for the target app, try to finish it
-                    appTask.finishAndRemoveTask()
+                try {
+                    val taskInfo = appTask.taskInfo
+                    if (taskInfo != null && taskInfo.baseActivity != null && 
+                        taskInfo.baseActivity!!.packageName == packageName) {
+                        // Check if this is a fresh task (recently created)
+                        val taskId = taskInfo.taskId
+                        Log.d("GateKeepInterception", "Found task for $packageName with ID: $taskId")
+                        
+                        // Only finish if it's not the main launcher task
+                        if (!taskInfo.baseActivity!!.className.contains("launcher", ignoreCase = true)) {
+                            appTask.finishAndRemoveTask()
+                            Log.d("GateKeepInterception", "Finished task for $packageName")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.w("GateKeepInterception", "Error processing app task: ${e.message}")
                 }
             }
             
-            // Alternative approach for older Android versions
-            @Suppress("DEPRECATION")
-            activityManager.runningAppProcesses?.forEach { processInfo ->
-                if (processInfo.processName == packageName) {
-                    android.os.Process.killProcess(processInfo.pid)
-                }
-            }
         } catch (e: Exception) {
-            Log.e("GateKeepInterception", "Error killing target app task: ${e.message}", e)
+            Log.e("GateKeepInterception", "Error in killTargetAppTask: ${e.message}", e)
         }
     }
 } 

@@ -14,6 +14,7 @@ import android.widget.Toast
 import com.example.gatekeep.InterceptionActivity
 import com.example.gatekeep.data.AppRepository
 import com.example.gatekeep.data.GateKeepApp
+import com.example.gatekeep.service.OverlayService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -159,7 +160,8 @@ class AppMonitoringService : AccessibilityService() {
                 if (packageName == "com.example.gatekeep" || 
                     packageName.contains("com.android.systemui") || 
                     packageName == "android" ||
-                    packageName.startsWith("com.android.launcher")) {
+                    packageName.startsWith("com.android.launcher") ||
+                    packageName.contains("launcher")) {
                     return
                 }
                 
@@ -176,6 +178,7 @@ class AppMonitoringService : AccessibilityService() {
                     val timeSinceLaunch = currentTime - launchTime
                     if (timeSinceLaunch < LAUNCH_TIMEOUT) {
                         // Skip interception for apps we're launching ourselves
+                        Log.d(TAG, "Skipping interception for $packageName - recently launched by us")
                         return
                     } else {
                         // Remove from the list if timeout exceeded
@@ -189,15 +192,18 @@ class AppMonitoringService : AccessibilityService() {
                 if (lastInterceptionTime != null) {
                     val timeSinceLastInterception = currentTime - lastInterceptionTime
                     if (timeSinceLastInterception < REINTERCEPTION_THRESHOLD) {
+                        Log.d(TAG, "Skipping interception for $packageName - too soon since last interception")
                         return
                     }
                 }
                 
+                Log.d(TAG, "Intercepting app: $packageName")
+                
                 // This app is enabled and eligible for interception
-                // Update the interception time
+                // Update the interception time immediately to prevent duplicate triggers
                 packageInterceptionTimes[packageName] = currentTime
                 
-                // Record the app opening action
+                // Record the app opening action in background
                 serviceScope.launch {
                     try {
                         repository.recordAppAction(packageName, "OPENED")
@@ -206,20 +212,31 @@ class AppMonitoringService : AccessibilityService() {
                     }
                 }
                 
-                // Launch interception activity with proper flags for immediate display
-                mainScope.launch {
-                    val intent = Intent(this@AppMonitoringService, InterceptionActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or 
-                               Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                               Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or
-                               Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-                    putExtra("packageName", packageName)
-                        putExtra("timestamp", currentTime)
-                }
+                // Use the new OverlayService for immediate system overlay
                 try {
-                    startActivity(intent)
+                    OverlayService.showOverlay(this@AppMonitoringService, packageName)
+                    Log.d(TAG, "Successfully triggered system overlay for $packageName")
                 } catch (e: Exception) {
-                    Log.e(TAG, "Failed to launch interception activity", e)
+                    Log.e(TAG, "Failed to show system overlay for $packageName, falling back to activity", e)
+                    
+                    // Fallback to InterceptionActivity if OverlayService fails
+                    try {
+                        val intent = Intent(this@AppMonitoringService, InterceptionActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or 
+                                       Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                       Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or
+                                       Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
+                                       Intent.FLAG_ACTIVITY_NO_HISTORY or
+                                       Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            putExtra("packageName", packageName)
+                            putExtra("timestamp", currentTime)
+                        }
+                        startActivity(intent)
+                        Log.d(TAG, "Successfully launched InterceptionActivity fallback for $packageName")
+                    } catch (fallbackError: Exception) {
+                        Log.e(TAG, "Both overlay service and activity fallback failed for $packageName", fallbackError)
+                        // Remove the interception time so it can be retried
+                        packageInterceptionTimes.remove(packageName)
                     }
                 }
             }

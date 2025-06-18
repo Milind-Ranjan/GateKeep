@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_background">
+
+    <!-- Gradient Overlay -->
+    <View
+        android:id="@+id/gradientOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_background" />
+    
+    <!-- Particle Animation Container -->
+    <FrameLayout
+        android:id="@+id/particleContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Phase Text -->
+            <TextView
+                android:id="@+id/tvPhaseIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.8"
+                android:letterSpacing="0.15"
+                android:text="BREATHE"
+                android:textColor="@color/teal_200"
+                android:textSize="20sp"
+                android:layout_marginBottom="70dp"
+                app:layout_constraintBottom_toTopOf="@+id/breathingCircle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <!-- Central Core Circle -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/breathingCircle"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:cardBackgroundColor="@color/teal_500"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.35" />
+
+            <!-- Inner Pulse Wave 1 -->
+            <View
+                android:id="@+id/pulseWave1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:alpha="0.7"
+                android:background="@drawable/circle_ripple"
+                app:layout_constraintBottom_toBottomOf="@id/breathingCircle"
+                app:layout_constraintEnd_toEndOf="@id/breathingCircle"
+                app:layout_constraintStart_toStartOf="@id/breathingCircle"
+                app:layout_constraintTop_toTopOf="@id/breathingCircle" />
+
+            <!-- Inner Pulse Wave 2 -->
+            <View
+                android:id="@+id/pulseWave2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:alpha="0.5"
+                android:background="@drawable/circle_ripple"
+                app:layout_constraintBottom_toBottomOf="@id/breathingCircle"
+                app:layout_constraintEnd_toEndOf="@id/breathingCircle"
+                app:layout_constraintStart_toStartOf="@id/breathingCircle"
+                app:layout_constraintTop_toTopOf="@id/breathingCircle" />
+
+            <!-- Journal Container -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mindfulnessContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="120dp"
+                android:visibility="invisible"
+                app:cardBackgroundColor="@color/dark_card"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/breathingCircle">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp">
+
+                    <!-- Journal Input -->
+                    <EditText
+                        android:id="@+id/etJournal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/journal_input_background"
+                        android:gravity="top|start"
+                        android:hint="Why are you here..."
+                        android:minLines="5"
+                        android:padding="16dp"
+                        android:textColor="@color/text_primary_light"
+                        android:textColorHint="@color/text_secondary_light"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+    <!-- Orbital Circle Container -->
+    <FrameLayout
+        android:id="@+id/orbitalContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible" />
+
+    <!-- Bottom Action Container -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottomActionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:visibility="invisible"
+        android:translationY="200dp"
+        app:cardBackgroundColor="@color/dark_elevated"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="24dp"
+            android:paddingHorizontal="24dp">
+
+            <!-- Action Buttons Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- Close Button -->
+                <Button
+                    android:id="@+id/btnClose"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/rounded_button_background"
+                    android:text="CLOSE"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:textColor="@color/teal_200"
+                    android:textAllCaps="false" />
+
+                <!-- Continue Button -->
+                <Button
+                    android:id="@+id/btnContinue"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/rounded_button_highlight"
+                    android:enabled="true"
+                    android:text="CONTINUE"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout> 
