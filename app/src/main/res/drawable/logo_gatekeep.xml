@@ -13,79 +13,79 @@
     <!-- Outer Ring with Gradient - representing mindfulness -->
     <path
         android:pathData="M54,16C33.01,16 16,33.01 16,54C16,74.99 33.01,92 54,92C74.99,92 92,74.99 92,54C92,33.01 74.99,16 54,16ZM54,82C38.54,82 26,69.46 26,54C26,38.54 38.54,26 54,26C69.46,26 82,38.54 82,54C82,69.46 69.46,82 54,82Z"
-        android:fillColor="#00796B"
-        android:fillAlpha="0.5" />
+        android:fillColor="@color/accent_alpha_20"
+        android:fillAlpha="0.6" />
         
     <!-- Inner Ring Pulse Effect -->
     <path
         android:pathData="M54,31C41.3,31 31,41.3 31,54C31,66.7 41.3,77 54,77C66.7,77 77,66.7 77,54C77,41.3 66.7,31 54,31ZM54,71C44.61,71 37,63.39 37,54C37,44.61 44.61,37 54,37C63.39,37 71,44.61 71,54C71,63.39 63.39,71 54,71Z"
-        android:fillColor="#4DB6AC"
-        android:fillAlpha="0.8" />
+        android:fillColor="@color/accent_alpha_30"
+        android:fillAlpha="0.7" />
         
     <!-- Gate Symbol - representing the keeper -->
     <path
         android:pathData="M54,42C47.37,42 42,47.37 42,54C42,60.63 47.37,66 54,66C60.63,66 66,60.63 66,54C66,47.37 60.63,42 54,42Z"
-        android:fillColor="#B2DFDB" />
+        android:fillColor="@color/accent_alpha_50" />
         
     <!-- Gate Opening Lines -->
     <path
         android:pathData="M54,54L54,30"
-        android:strokeWidth="3"
-        android:strokeColor="#80CBC4"
+        android:strokeWidth="2"
+        android:strokeColor="@color/accent_alpha_30"
         android:strokeLineCap="round" />
         
     <path
         android:pathData="M54,54L70,44"
-        android:strokeWidth="2.5"
-        android:strokeColor="#80CBC4"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/accent_alpha_30"
         android:strokeLineCap="round" />
         
     <path
         android:pathData="M54,54L38,44"
-        android:strokeWidth="2.5"
-        android:strokeColor="#80CBC4"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/accent_alpha_30"
         android:strokeLineCap="round" />
         
     <!-- Inner Circle Accent -->
     <path
-        android:pathData="M54,58m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
-        android:fillColor="#009688" />
+        android:pathData="M54,58m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
+        android:fillColor="@color/text_secondary_light" />
         
     <!-- Orbital Accent Points -->
     <path
-        android:pathData="M35,54m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
-        android:fillColor="#E0F2F1" />
+        android:pathData="M35,54m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="@color/text_disabled_light" />
         
     <path
-        android:pathData="M73,54m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
-        android:fillColor="#E0F2F1" />
+        android:pathData="M73,54m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="@color/text_disabled_light" />
         
     <path
-        android:pathData="M54,35m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
-        android:fillColor="#E0F2F1" />
+        android:pathData="M54,35m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="@color/text_disabled_light" />
         
     <path
-        android:pathData="M54,73m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
-        android:fillColor="#E0F2F1" />
+        android:pathData="M54,73m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0"
+        android:fillColor="@color/text_disabled_light" />
         
     <!-- Subtle Particle Effects -->
     <path
-        android:pathData="M45,45m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"
-        android:fillColor="#E0F2F1"
-        android:fillAlpha="0.6" />
+        android:pathData="M45,45m-0.8,0a0.8,0.8 0,1 1,1.6 0a0.8,0.8 0,1 1,-1.6 0"
+        android:fillColor="@color/accent_alpha_20"
+        android:fillAlpha="0.4" />
         
     <path
-        android:pathData="M63,45m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"
-        android:fillColor="#E0F2F1"
-        android:fillAlpha="0.6" />
+        android:pathData="M63,45m-0.8,0a0.8,0.8 0,1 1,1.6 0a0.8,0.8 0,1 1,-1.6 0"
+        android:fillColor="@color/accent_alpha_20"
+        android:fillAlpha="0.4" />
         
     <path
-        android:pathData="M45,63m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"
-        android:fillColor="#E0F2F1"
-        android:fillAlpha="0.6" />
+        android:pathData="M45,63m-0.8,0a0.8,0.8 0,1 1,1.6 0a0.8,0.8 0,1 1,-1.6 0"
+        android:fillColor="@color/accent_alpha_20"
+        android:fillAlpha="0.4" />
         
     <path
-        android:pathData="M63,63m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0"
-        android:fillColor="#E0F2F1"
-        android:fillAlpha="0.6" />
+        android:pathData="M63,63m-0.8,0a0.8,0.8 0,1 1,1.6 0a0.8,0.8 0,1 1,-1.6 0"
+        android:fillColor="@color/accent_alpha_20"
+        android:fillAlpha="0.4" />
 </vector> 

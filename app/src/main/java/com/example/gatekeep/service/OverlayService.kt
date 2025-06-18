@@ -193,17 +193,16 @@ class OverlayService : Service() {
     
     private fun setupOverlayView(view: View, packageName: String) {
         // Initialize UI elements similar to InterceptionActivity
-        val breathingCircle = view.findViewById<CardView>(R.id.breathingCircle)
-        val pulseWave1 = view.findViewById<View>(R.id.pulseWave1)
-        val pulseWave2 = view.findViewById<View>(R.id.pulseWave2)
-        val particleContainer = view.findViewById<FrameLayout>(R.id.particleContainer)
+        val outerRipple = view.findViewById<View>(R.id.outerRipple)
+        val middleRipple = view.findViewById<View>(R.id.middleRipple)
+        val particleContainer = view.findViewById<FrameLayout>(R.id.particleSystemContainer)
         val orbitalContainer = view.findViewById<FrameLayout>(R.id.orbitalContainer)
-        val tvPhaseIndicator = view.findViewById<TextView>(R.id.tvPhaseIndicator)
-        val mindfulnessContainer = view.findViewById<CardView>(R.id.mindfulnessContainer)
-        val etJournal = view.findViewById<EditText>(R.id.etJournal)
-        val bottomActionContainer = view.findViewById<CardView>(R.id.bottomActionContainer)
-        val btnContinue = view.findViewById<Button>(R.id.btnContinue)
-        val btnClose = view.findViewById<Button>(R.id.btnClose)
+        val tvBreathingInstruction = view.findViewById<TextView>(R.id.tvBreathingInstruction)
+        val mindfulnessContainer = view.findViewById<CardView>(R.id.mindfulnessCard)
+        val etJournal = view.findViewById<EditText>(R.id.etMindfulnessReflection)
+        val bottomActionContainer = view.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.actionBar)
+        val btnContinue = view.findViewById<Button>(R.id.btnContinueApp)
+        val btnClose = view.findViewById<Button>(R.id.btnSkip)
         
         // Add particle and orbital views
         try {
@@ -214,16 +213,15 @@ class OverlayService : Service() {
         }
         
         // Set up initial UI state
-        tvPhaseIndicator.text = "BREATHE"
-        pulseWave1.alpha = 0f
-        pulseWave2.alpha = 0f
+        tvBreathingInstruction.text = "BREATHE IN"
+        outerRipple.alpha = 0f
+        middleRipple.alpha = 0f
         mindfulnessContainer.alpha = 0f
         mindfulnessContainer.visibility = View.INVISIBLE
         
         // Hide bottom action container initially - only show after breathing session
         bottomActionContainer.alpha = 0f
         bottomActionContainer.visibility = View.INVISIBLE
-        bottomActionContainer.translationY = resources.displayMetrics.heightPixels.toFloat()
         
         // Set up button listeners
         btnContinue.setOnClickListener {
@@ -245,8 +243,8 @@ class OverlayService : Service() {
     
     private fun startOverlayAnimations(view: View) {
         val breathingCircle = view.findViewById<CardView>(R.id.breathingCircle)
-        val pulseWave1 = view.findViewById<View>(R.id.pulseWave1)
-        val pulseWave2 = view.findViewById<View>(R.id.pulseWave2)
+        val outerRipple = view.findViewById<View>(R.id.outerRipple)
+        val middleRipple = view.findViewById<View>(R.id.middleRipple)
         
         // Start breathing animation
         val breathingAnimation = breathingCircle.animate()
@@ -272,24 +270,24 @@ class OverlayService : Service() {
         // Start pulse animations
         handler.postDelayed({
             if (isOverlayShowing) {
-                startPulseAnimations(pulseWave1, pulseWave2)
+                startPulseAnimations(outerRipple, middleRipple)
             }
         }, 1000)
     }
     
-    private fun startPulseAnimations(pulseWave1: View, pulseWave2: View) {
-        pulseWave1.alpha = 0.7f
-        pulseWave1.scaleX = 1f
-        pulseWave1.scaleY = 1f
+    private fun startPulseAnimations(outerRipple: View, middleRipple: View) {
+        outerRipple.alpha = 0.3f
+        outerRipple.scaleX = 1f
+        outerRipple.scaleY = 1f
         
-        pulseWave1.animate()
-            .scaleX(3f)
-            .scaleY(3f)
+        outerRipple.animate()
+            .scaleX(1.5f)
+            .scaleY(1.5f)
             .alpha(0f)
-            .setDuration(3000)
+            .setDuration(4000)
             .withEndAction {
                 if (isOverlayShowing) {
-                    startPulseAnimations(pulseWave1, pulseWave2)
+                    startPulseAnimations(outerRipple, middleRipple)
                 }
             }
             .start()
@@ -297,26 +295,26 @@ class OverlayService : Service() {
         // Second wave with delay
         handler.postDelayed({
             if (isOverlayShowing) {
-                pulseWave2.alpha = 0.5f
-                pulseWave2.scaleX = 1f
-                pulseWave2.scaleY = 1f
+                middleRipple.alpha = 0.5f
+                middleRipple.scaleX = 1f
+                middleRipple.scaleY = 1f
                 
-                pulseWave2.animate()
-                    .scaleX(3f)
-                    .scaleY(3f)
+                middleRipple.animate()
+                    .scaleX(1.3f)
+                    .scaleY(1.3f)
                     .alpha(0f)
-                    .setDuration(3000)
+                    .setDuration(4000)
                     .start()
             }
-        }, 1500)
+        }, 2000)
     }
     
     private fun showJournalPhase(view: View) {
-        val tvPhaseIndicator = view.findViewById<TextView>(R.id.tvPhaseIndicator)
-        val mindfulnessContainer = view.findViewById<CardView>(R.id.mindfulnessContainer)
-        val bottomActionContainer = view.findViewById<CardView>(R.id.bottomActionContainer)
+        val tvBreathingInstruction = view.findViewById<TextView>(R.id.tvBreathingInstruction)
+        val mindfulnessContainer = view.findViewById<CardView>(R.id.mindfulnessCard)
+        val bottomActionContainer = view.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.actionBar)
         
-        tvPhaseIndicator.text = "JOURNAL"
+        tvBreathingInstruction.text = "REFLECT"
         
         // Show mindfulness container first
         mindfulnessContainer.visibility = View.VISIBLE
@@ -336,15 +334,14 @@ class OverlayService : Service() {
             .start()
     }
     
-    private fun showBottomActions(bottomActionContainer: androidx.cardview.widget.CardView) {
+    private fun showBottomActions(bottomActionContainer: androidx.constraintlayout.widget.ConstraintLayout) {
         // Make the bottom action container visible and animate it up
         bottomActionContainer.visibility = View.VISIBLE
         bottomActionContainer.alpha = 0f
         
-        // Animate the container sliding up and fading in
+        // Animate the container fading in
         bottomActionContainer.animate()
             .alpha(1f)
-            .translationY(0f)
             .setDuration(600)
             .setInterpolator(android.view.animation.DecelerateInterpolator())
             .start()

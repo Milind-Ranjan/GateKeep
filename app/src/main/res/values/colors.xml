@@ -1,39 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Main colors -->
+    <!-- Core colors -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFFFF</color>
     
-    <!-- Primary colors - Teal -->
-    <color name="teal_50">#E0F2F1</color>
-    <color name="teal_100">#B2DFDB</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_300">#4DB6AC</color>
-    <color name="teal_400">#26A69A</color>
-    <color name="teal_500">#009688</color>
-    <color name="teal_600">#00897B</color>
-    <color name="teal_700">#00796B</color>
-    <color name="teal_800">#00695C</color>
-    <color name="teal_900">#004D40</color>
+    <!-- Primary colors - Modern Teal/Cyan Palette -->
+    <color name="teal_50">#E0F7FA</color>
+    <color name="teal_100">#B2EBF2</color>
+    <color name="teal_200">#4ECDFF</color>
+    <color name="teal_300">#26C6DA</color>
+    <color name="teal_400">#00BCD4</color>
+    <color name="teal_500">#00ACC1</color>
+    <color name="teal_600">#0097A7</color>
+    <color name="teal_700">#00838F</color>
+    <color name="teal_800">#006064</color>
+    <color name="teal_900">#004D5C</color>
     
     <!-- Accent colors -->
-    <color name="accent_teal">#00BCD4</color>
+    <color name="accent_teal">#4ECDFF</color>
+    <color name="accent_bright">#00BCD4</color>
+    <color name="accent_deep">#009688</color>
     
-    <!-- Dark theme colors -->
-    <color name="dark_background">#0F1518</color>
-    <color name="dark_surface">#FF1E1E1E</color>
-    <color name="dark_card">#151D22</color>
-    <color name="dark_card_lighter">#1A242C</color>
-    <color name="dark_elevated">#FF2C2C2C</color>
-    <color name="background_dark">#121212</color>
+    <!-- Modern Dark Theme - Sophisticated Grays -->
+    <color name="dark_background">#0A0E12</color>
+    <color name="dark_surface">#161B22</color>
+    <color name="dark_card">#1E2328</color>
+    <color name="dark_card_lighter">#262C33</color>
+    <color name="dark_elevated">#2C3338</color>
+    <color name="background_dark">#0F1419</color>
     
-    <!-- Text colors -->
-    <color name="text_primary_light">#E6FFFFFF</color>
-    <color name="text_secondary_light">#99FFFFFF</color>
-    <color name="text_disabled_light">#61FFFFFF</color>
-    <color name="text_secondary">#E0E0E0</color>
+    <!-- Surface variations -->
+    <color name="surface_primary">#161B22</color>
+    <color name="surface_secondary">#1E2328</color>
+    <color name="surface_tertiary">#262C33</color>
+    <color name="surface_elevated">#2F3439</color>
     
-    <color name="text_primary_dark">#DE000000</color>
+    <!-- Text colors - Enhanced contrast -->
+    <color name="text_primary_light">#F0FFFFFF</color>
+    <color name="text_secondary_light">#B3FFFFFF</color>
+    <color name="text_disabled_light">#66FFFFFF</color>
+    <color name="text_hint_light">#4DFFFFFF</color>
+    
+    <!-- Text colors for dark backgrounds -->
+    <color name="text_primary_dark">#E6000000</color>
     <color name="text_secondary_dark">#99000000</color>
     <color name="text_disabled_dark">#61000000</color>
+    
+    <!-- Modern accent variations with transparency -->
+    <color name="accent_alpha_10">#1A00BCD4</color>
+    <color name="accent_alpha_20">#3300BCD4</color>
+    <color name="accent_alpha_30">#4D00BCD4</color>
+    <color name="accent_alpha_50">#8000BCD4</color>
+    
+    <!-- Status colors -->
+    <color name="success">#00C851</color>
+    <color name="warning">#FFB74D</color>
+    <color name="error">#FF5252</color>
+    <color name="info">#4ECDFF</color>
+    
+    <!-- Border and divider colors -->
+    <color name="border_primary">#1A00BCD4</color>
+    <color name="border_secondary">#33FFFFFF</color>
+    <color name="divider">#1AFFFFFF</color>
+    
+    <!-- Legacy support (keeping for backward compatibility) -->
+    <color name="text_secondary">#B3FFFFFF</color>
 </resources>
