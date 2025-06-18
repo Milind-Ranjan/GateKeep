@@ -63,12 +63,6 @@ GateKeep is a mindful digital wellbeing application designed to help users devel
 - **Mindful Metrics**: Focus on awareness rather than restriction
 - **Progress Tracking**: Monitor changes in usage patterns
 
-### 🎨 Design Excellence
-- **Modern Material Design**: Clean, minimalistic interface following latest Android guidelines
-- **Soothing Color Palette**: Carefully crafted teal and dark theme for calming experience
-- **Smooth Animations**: Fluid transitions and breathing animations
-- **Accessibility Ready**: Full accessibility service integration
-
 ## 🚀 Technical Architecture
 
 ### Technology Stack
@@ -98,12 +92,6 @@ data class GateKeepApp(
     val lastUsed: Long = 0
 )
 ```
-
-#### 🎨 UI Components
-- **Modern Card Layouts**: Elegant card-based design
-- **Breathing Animations**: Multi-layered ripple effects
-- **Particle Systems**: Subtle particle animations for ambiance
-- **Responsive Design**: Adapts to different screen sizes
 
 ### 📁 Project Structure
 ```
@@ -183,51 +171,6 @@ GateKeep requires the following permissions to function:
 3. **Reflection Prompt**: Answer questions about your intentions
 4. **Conscious Choice**: Decide whether to continue or close the app
 
-### Features Walkthrough
-
-#### 🏠 Home Screen
-- View daily usage statistics
-- See your most gatekept apps
-- Quick access to app management
-- Motivational quotes and insights
-
-#### 📱 Apps Screen
-- Browse all installed apps
-- Toggle gatekeeping for specific apps
-- Search and filter functionality
-- See which apps are currently monitored
-
-#### 📊 Stats Screen
-- Detailed usage analytics
-- Visual charts and trends
-- Progress tracking over time
-- Insights into usage patterns
-
-
-### Areas for Contribution
-- 🌐 **Internationalization**: Add support for more languages
-- 🎨 **Themes**: Create additional color themes
-- 📊 **Analytics**: Enhance usage statistics and insights
-- 🔧 **Performance**: Optimize app performance and battery usage
-- 🧪 **Testing**: Improve test coverage
-- 📱 **Accessibility**: Enhance accessibility features
-
-## 🐛 Known Issues & Roadmap
-
-### Current Limitations
-- Overlay may not work on some heavily customized Android versions
-- Battery optimization may affect service reliability
-- Some OEMs have specific restrictions on accessibility services
-
-### Planned Features
-- [ ] **Habit Tracking**: Long-term usage pattern analysis
-- [ ] **Smart Notifications**: Intelligent reminders and insights
-- [ ] **Community Features**: Share progress with friends
-- [ ] **Advanced Analytics**: ML-powered usage predictions
-- [ ] **Meditation Integration**: Built-in meditation sessions
-- [ ] **Customizable Interventions**: Personalized breathing exercises
-
----
 
 <div align="center">
 
