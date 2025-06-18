@@ -48,8 +48,15 @@ class OverlayService : Service() {
         private const val NOTIFICATION_ID = 12345
         private const val CHANNEL_ID = "overlay_service_channel"
         private var serviceInstance: OverlayService? = null
+        private var isClosing = false
         
         fun showOverlay(context: Context, packageName: String) {
+            // Don't show overlay if we're in the process of closing
+            if (isClosing) {
+                Log.d("OverlayService", "Ignoring showOverlay request - service is closing")
+                return
+            }
+            
             val intent = Intent(context, OverlayService::class.java)
             intent.action = "SHOW_OVERLAY"
             intent.putExtra("packageName", packageName)
@@ -63,7 +70,7 @@ class OverlayService : Service() {
         }
         
         fun isOverlayActive(): Boolean {
-            return serviceInstance?.isOverlayShowing == true
+            return serviceInstance?.isOverlayShowing == true && !isClosing
         }
     }
     
@@ -126,11 +133,11 @@ class OverlayService : Service() {
     
     private fun showSystemOverlay(packageName: String) {
         if (isOverlayShowing) {
-            Log.d("OverlayService", "Overlay already showing, updating for package: $packageName")
-            updateOverlayContent(packageName)
+            Log.d("OverlayService", "Overlay already showing, ignoring duplicate request for package: $packageName")
             return
         }
         
+        Log.d("OverlayService", "Showing system overlay for package: $packageName")
         currentPackageName = packageName
         
         try {
@@ -223,13 +230,23 @@ class OverlayService : Service() {
         bottomActionContainer.alpha = 0f
         bottomActionContainer.visibility = View.INVISIBLE
         
-        // Set up button listeners
+        // Set up button listeners with debouncing to prevent double clicks
+        var isButtonClicked = false
+        
         btnContinue.setOnClickListener {
-            continueToApp(packageName, etJournal.text.toString())
+            if (!isButtonClicked) {
+                isButtonClicked = true
+                Log.d("OverlayService", "Continue button clicked for: $packageName")
+                continueToApp(packageName, etJournal.text.toString())
+            }
         }
         
         btnClose.setOnClickListener {
-            closeApp(packageName)
+            if (!isButtonClicked) {
+                isButtonClicked = true
+                Log.d("OverlayService", "Close button clicked for: $packageName")
+                closeApp(packageName)
+            }
         }
         
         // Start animations
@@ -393,6 +410,18 @@ class OverlayService : Service() {
     }
     
     private fun closeApp(packageName: String) {
+        Log.d("OverlayService", "closeApp called for: $packageName")
+        
+        // CRITICAL: Set closing flag to prevent any new overlay requests
+        isClosing = true
+        
+        // CRITICAL: Stop app switch monitoring immediately to prevent restart
+        handler.removeCallbacksAndMessages(null)
+        
+        // Set flags to prevent any restart
+        isOverlayShowing = false
+        currentPackageName = ""
+        
         // Record close action
         serviceScope.launch {
             try {
@@ -402,19 +431,25 @@ class OverlayService : Service() {
             }
         }
         
-        // Hide overlay and go to home
+        // CRITICAL: Mark app as being launched to prevent re-interception
+        AppMonitoringService.getInstance()?.markAppAsLaunching(packageName)
+        
+        // Hide overlay immediately
         hideSystemOverlay()
         
-        handler.postDelayed({
-            try {
-                val intent = Intent(Intent.ACTION_MAIN)
-                intent.addCategory(Intent.CATEGORY_HOME)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-            } catch (e: Exception) {
-                Log.e("OverlayService", "Error returning to home: ${e.message}", e)
-            }
-        }, 300)
+        // Stop the service to prevent any restart
+        stopSelf()
+        
+        // Return to home immediately
+        try {
+            val intent = Intent(Intent.ACTION_MAIN)
+            intent.addCategory(Intent.CATEGORY_HOME)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            Log.d("OverlayService", "Returned to home after closing app: $packageName")
+        } catch (e: Exception) {
+            Log.e("OverlayService", "Error returning to home: ${e.message}", e)
+        }
     }
     
     private fun updateOverlayContent(packageName: String) {
@@ -427,14 +462,19 @@ class OverlayService : Service() {
     
     private fun hideSystemOverlay() {
         try {
+            // Stop all animations and clear any pending handlers
+            handler.removeCallbacksAndMessages(null)
+            
             overlayView?.let { view ->
+                // Clear all animations before removing
+                view.clearAnimation()
                 windowManager.removeView(view)
             }
             overlayView = null
             isOverlayShowing = false
             currentPackageName = ""
             
-            Log.d("OverlayService", "System overlay hidden")
+            Log.d("OverlayService", "System overlay hidden completely")
         } catch (e: Exception) {
             Log.e("OverlayService", "Error hiding system overlay: ${e.message}", e)
         }
@@ -456,6 +496,11 @@ class OverlayService : Service() {
     }
     
     private fun checkForAppSwitch() {
+        // Don't check for app switch if overlay is not showing or being closed
+        if (!isOverlayShowing || currentPackageName.isEmpty()) {
+            return
+        }
+        
         try {
             val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
             
@@ -468,7 +513,8 @@ class OverlayService : Service() {
                         val taskPackage = taskInfo.baseActivity!!.packageName
                         
                         // If user is trying to access the intercepted app, bring overlay back to front
-                        if (taskPackage == currentPackageName) {
+                        // BUT only if overlay is still supposed to be showing
+                        if (taskPackage == currentPackageName && isOverlayShowing) {
                             Log.d("OverlayService", "Detected attempt to switch to intercepted app: $taskPackage")
                             bringOverlayToFront()
                             break
@@ -504,8 +550,19 @@ class OverlayService : Service() {
     
     override fun onDestroy() {
         super.onDestroy()
+        
+        // Clear all handlers and callbacks
+        handler.removeCallbacksAndMessages(null)
+        
+        // Hide overlay and clean up
         hideSystemOverlay()
+        
+        // Clear service instance and flags
         serviceInstance = null
-        Log.d("OverlayService", "OverlayService destroyed")
+        isOverlayShowing = false
+        currentPackageName = ""
+        isClosing = false // Reset for next time
+        
+        Log.d("OverlayService", "OverlayService destroyed completely")
     }
 } 

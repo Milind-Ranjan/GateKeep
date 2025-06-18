@@ -43,7 +43,7 @@ class AppMonitoringService : AccessibilityService() {
     
     // Time thresholds
     private val REINTERCEPTION_THRESHOLD = 5000L  // 5 seconds
-    private val LAUNCH_TIMEOUT = 10000L  // 10 seconds
+    private val LAUNCH_TIMEOUT = 15000L  // 15 seconds (increased to prevent re-interception after close)
     
     // Periodic task to clean up tracking maps
     private val cleanupTask = object : Runnable {
@@ -263,7 +263,9 @@ class AppMonitoringService : AccessibilityService() {
     
     // Method to mark an app as being launched
     fun markAppAsLaunching(packageName: String) {
-        appsBeingLaunched[packageName] = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis()
+        appsBeingLaunched[packageName] = currentTime
+        Log.d(TAG, "Marked app as launching: $packageName at $currentTime")
     }
     
     // Setup detection for app clearing and screen events
