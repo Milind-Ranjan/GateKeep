@@ -7,38 +7,11 @@
 # 🛡️ **GateKeep**
 <!-- Logo will appear here once you add gatekeep-logo.png to the assets folder -->
 <img src="Logo.png" alt="GateKeep Logo" width="200"/>
-
-[![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://android.com)
-[![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg)](https://kotlinlang.org)
-[![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
-
 </div>
 
 ## 🧠 Research-Backed Approach
 
 **Summary**: Although no study has tested "one deep breath on Instagram launch" exactly, converging evidence shows that brief mindfulness or breath breaks can break compulsive scrolling. "Pause-and-breathe" interventions reduce actual social-media use (one sec app halved usage), likely by jolting users into awareness. More broadly, mindfulness training and breath exercises improve attention, self-control and mood, which should make it easier to resist automatic doomscrolling. Taken together, the research supports the idea that a deliberate breath pause at app-opening – a momentary mindful break – can curb impulsive social-media use and reduce anxiety in the moment.
-
-## 🎥 Demo Videos
-
-### 📱 Setup Guide
-
-<video width="100%" controls>
-  <source src="demos/setup.mp4" type="video/mp4">
-  Your browser does not support the video tag. Please <a href="demos/setup.mp4">download the setup video</a> to view it.
-</video>
-
-*Complete walkthrough of setting up GateKeep on your device*
-
-### 🌊 Working Demo
-
-<video width="100%" controls>
-  <source src="demos/working.mp4" type="video/mp4">
-  Your browser does not support the video tag. Please <a href="demos/working.mp4">download the demo video</a> to view it.
-</video>
-
-*See GateKeep's mindful intervention in action*
-
----
 
 ## 📖 Overview
 
@@ -181,8 +154,6 @@ GateKeep requires the following permissions to function:
 4. **Conscious Choice**: Decide whether to continue or close the app
 
 <div align="center">
-
-**Made with ❤️ for mindful mobile usage**
 
 *GateKeep is not just an app blocker - it's a companion for developing healthier digital habits through mindfulness and self-reflection.*
 
