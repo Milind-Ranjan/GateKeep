@@ -6,7 +6,7 @@
 
 # 🛡️ **GateKeep**
 <!-- Logo will appear here once you add gatekeep-logo.png to the assets folder -->
-<img src="logo.png" alt="GateKeep Logo" width="200"/>
+<img src="Logo.png" alt="GateKeep Logo" width="200"/>
 
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://android.com)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg)](https://kotlinlang.org)
