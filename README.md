@@ -4,7 +4,11 @@
 
 <div align="center">
 
-![GateKeep Logo](app/src/main/res/drawable/logo_gatekeep.xml)
+# 🛡️ **GateKeep**
+### *A mindful companion for digital wellbeing*
+
+<!-- Logo will appear here once you add gatekeep-logo.png to the assets folder -->
+<img src="assets/gatekeep-logo.png" alt="GateKeep Logo" width="200"/>
 
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://android.com)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg)](https://kotlinlang.org)
@@ -22,13 +26,19 @@
 
 <video width="100%" controls>
   <source src="demos/setup.mp4" type="video/mp4">
+  Your browser does not support the video tag. Please <a href="demos/setup.mp4">download the setup video</a> to view it.
 </video>
+
+*Complete walkthrough of setting up GateKeep on your device*
 
 ### 🌊 Working Demo
 
 <video width="100%" controls>
   <source src="demos/working.mp4" type="video/mp4">
+  Your browser does not support the video tag. Please <a href="demos/working.mp4">download the demo video</a> to view it.
 </video>
+
+*See GateKeep's mindful intervention in action*
 
 ---
 
@@ -43,25 +53,6 @@ GateKeep is a mindful digital wellbeing application designed to help users devel
 - **Breathing Exercises**: Incorporates calming breathing animations to reduce impulsive app usage
 - **Journaling**: Provides space for users to document their thoughts and feelings
 
-## ✨ Key Features
-
-### 🌊 Mindful Overlay System
-- **Breathing Circle Animation**: Soothing, multi-layered ripple animations with teal gradients
-- **Reflection Prompts**: Contextual questions like "What brought you here?" and "Take a moment"
-- **Gentle Interruption**: Non-aggressive intervention that respects user autonomy
-- **Modern UI**: Dark theme with soft gradients and professional color scheme
-
-### 📱 App Management
-- **Selective Monitoring**: Choose specific apps to "gatekeep"
-- **Real-time Detection**: Accessibility service monitors app launches
-- **Smart Filtering**: Exclude system apps and focus on user-installed applications
-- **Search & Filter**: Easy app discovery with search functionality
-
-### 📊 Usage Analytics
-- **Daily Statistics**: Track app usage patterns and trends
-- **Visual Charts**: Beautiful charts showing usage data over time
-- **Mindful Metrics**: Focus on awareness rather than restriction
-- **Progress Tracking**: Monitor changes in usage patterns
 
 ## 🚀 Technical Architecture
 
@@ -73,6 +64,26 @@ GateKeep is a mindful digital wellbeing application designed to help users devel
 - **Async Operations**: Kotlin Coroutines + Flow
 - **Navigation**: Navigation Component
 - **Charts**: Vico Charts + MPAndroidChart
+
+### Features Walkthrough
+
+#### 🏠 Home Screen
+- View daily usage statistics
+- See your most gatekept apps
+- Quick access to app management
+- Motivational quotes and insights
+
+#### 📱 Apps Screen
+- Browse all installed apps
+- Toggle gatekeeping for specific apps
+- Search and filter functionality
+- See which apps are currently monitored
+
+#### 📊 Stats Screen
+- Detailed usage analytics
+- Visual charts and trends
+- Progress tracking over time
+- Insights into usage patterns
 
 ### Key Components
 
@@ -170,7 +181,6 @@ GateKeep requires the following permissions to function:
 2. **Mindful Pause**: GateKeep presents a breathing exercise
 3. **Reflection Prompt**: Answer questions about your intentions
 4. **Conscious Choice**: Decide whether to continue or close the app
-
 
 <div align="center">
 
